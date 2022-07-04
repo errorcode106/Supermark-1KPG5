@@ -1,7 +1,7 @@
 package ar.com.arcom;
 
 import ar.com.arcom.bin.Usuario;
-import ar.com.arcom.console.ConsoleInterface;
+import ar.com.arcom.console.InterfaceConsole;
 import ar.com.arcom.ui.AdministradorUI;
 
 import javax.swing.*;
@@ -9,7 +9,7 @@ import javax.swing.*;
 public class Application {
     public final String TITULO = "SuperMark v0.20220630";
     private Usuario usuario;
-    private ConsoleInterface consoleInterface;
+    private InterfaceConsole consoleInterface;
 
     public Application(){
 
@@ -22,7 +22,7 @@ public class Application {
                 new Object[] { "Consola", "GUI"},"SuperMark GUI");
         switch (seleccion){
             case 0 -> {
-                consoleInterface = new ConsoleInterface(this);
+                consoleInterface = new InterfaceConsole(this);
                 consoleInterface.play();
             }
             case 1 -> {
@@ -47,5 +47,4 @@ public class Application {
         Application application = new Application();
         application.play();
     }
-    // flavio raton
 }

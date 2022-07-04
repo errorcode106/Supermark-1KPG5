@@ -39,7 +39,10 @@ public class InterfaceConsole implements Login {
                         if (valor == 1) {
                             ClientConsole clientConsole = new ClientConsole(application,actionHandler);
                             clientConsole.menuCliente();
-                        } else menuAdministrador();
+                        } else {
+                            AdminConsole adminConsole = new AdminConsole(application,actionHandler);
+                            adminConsole.menuAdministrador();
+                        }
                     }
                 }
                 case 2 -> {
@@ -94,78 +97,6 @@ public class InterfaceConsole implements Login {
         System.out.println("----------------------------------------------------");
         System.out.println(application.TITULO);
     }
-
-    // ----------------------------------------------------------------
-    // Menu Administrador
-
-    public void menuAdministrador(){
-        int respuesta;
-        do {
-            respuesta = menuPrincipalAdministrador();
-            switch (respuesta){
-                case 0 -> {
-                    actionHandler.cerrarSesion();
-                }
-                case 1 -> {menuVerProductoAdministrador();}
-                case 2 -> {}
-                case 3 -> System.out.println("administrador");
-                default -> {}
-            }
-        }while (respuesta != 0);
-    }
-    public int menuPrincipalAdministrador() {
-        System.out.println("----------------------------------------------------");
-        System.out.println(application.TITULO + " : Menu Principal");
-        System.out.println("Usuario: " + application.getUsuario().getNombre().toUpperCase().charAt(0)
-                + application.getUsuario().getNombre().substring(1));
-        System.out.println("----------------------------------------------------");
-        System.out.println("Ingrese [valor] correspondiente a la opcion elegida.");
-        System.out.println("[1] Modificar datos de los productos");
-        System.out.println("[2] Modificar datos de los productos");
-        System.out.println("");
-        System.out.println("[0] Cerrar Sesion");
-        System.out.println("----------------------------------------------------");
-        return scanner();
-    }
-    public void menuVerProductoAdministrador(){
-        int respuesta;
-        do {
-            respuesta = menuProductosAdministrador();
-            switch (respuesta){
-                case 1 -> {}
-                case 2 -> {}
-                default -> {}
-            }
-        }while (respuesta != 0);
-    }
-    public int menuProductosAdministrador(){
-        System.out.println("----------------------------------------------------");
-        System.out.println(application.TITULO + " : Menu Ver Productos");
-        System.out.println("Usuario: " + application.getUsuario().getNombre().toUpperCase().charAt(0)
-                + application.getUsuario().getNombre().substring(1));
-        System.out.println("----------------------------------------------------");
-
-        List<List<String>> lista = actionHandler.obtenerProductos();
-
-        System.out.println(" ID | Producto | Precio | Cantidad | Total |");
-
-        for (List<String> cadena : lista) {
-            for (String str : cadena) {
-                System.out.print(str); System.out.print(" | ");
-            }
-            System.out.println();
-        }
-        System.out.println("----------------------------------------------------");
-        System.out.println("Ingrese [valor] correspondiente a la opcion elegida.");
-        System.out.println("[1] Modificar Producto");
-        System.out.println("[2] Cargar producto");
-        System.out.println("[3] Buscar Producto");
-        System.out.println("");
-        System.out.println("[0] Volver");
-        System.out.println("----------------------------------------------------");
-        return scanner();
-    }
-
     // ----------------------------------------------------------------
     // Implementacion Interfaz Login
     @Override
