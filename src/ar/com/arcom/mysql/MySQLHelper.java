@@ -18,7 +18,7 @@ Pasos para usar JDBC:
 */
 
 
-public class HelperHandler {
+public class MySQLHelper {
     private Connection connection;
     private Statement statement;
     private ResultSet resultSet;
@@ -26,7 +26,7 @@ public class HelperHandler {
     private DataBaseInfo dataBaseInfo;
     private boolean openConnection;
 
-    public HelperHandler() {
+    public MySQLHelper() {
         connection = null;
         statement = null;
         resultSet = null;

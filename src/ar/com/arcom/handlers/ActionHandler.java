@@ -4,19 +4,19 @@ import ar.com.arcom.Application;
 import ar.com.arcom.bin.Administrador;
 import ar.com.arcom.bin.Articulo;
 import ar.com.arcom.bin.Cliente;
-import ar.com.arcom.mysql.HelperHandler;
+import ar.com.arcom.mysql.MySQLHelper;
 
 import java.util.List;
 
 public class ActionHandler {
-    private HelperHandler helperHandler;
+    private MySQLHelper mySQLHelper;
     private Application application;
     private boolean isLogin;
     private String user;
 
     public ActionHandler(Application application) {
         this.application = application;
-        this.helperHandler = new HelperHandler();
+        this.mySQLHelper = new MySQLHelper();
         isLogin = false;
     }
 
@@ -27,10 +27,10 @@ public class ActionHandler {
      */
     public int iniciarSecision(Login login){
         user = login.getUser();
-        if(helperHandler.existeElUsuario(user)){
-            if (helperHandler.compararUsuarioContrasenia(user, login.getPassword())){
+        if(mySQLHelper.existeElUsuario(user)){
+            if (mySQLHelper.compararUsuarioContrasenia(user, login.getPassword())){
                 isLogin = true;
-                if (helperHandler.getType(user) == 0) {
+                if (mySQLHelper.getType(user) == 0) {
                     application.setUsuario(new Cliente(user));
                     return 1;
                 } else {
@@ -48,8 +48,8 @@ public class ActionHandler {
      */
     public int registrarse(Login login){
         user = login.getUser();
-        if(!helperHandler.existeElUsuario(user)){
-            int aux = helperHandler.añadeUsuario(user, login.getPassword());
+        if(!mySQLHelper.existeElUsuario(user)){
+            int aux = mySQLHelper.añadeUsuario(user, login.getPassword());
             if(aux != -1){
                 isLogin = true;
                 application.setUsuario(new Cliente(user));
@@ -65,7 +65,7 @@ public class ActionHandler {
         System.gc();
     }
     public List<List<String>> obtenerProductos(){
-        return helperHandler.obtenerProductos();
+        return mySQLHelper.obtenerProductos();
     }
 
     public String getUser() {
@@ -73,25 +73,25 @@ public class ActionHandler {
     }
 
     public void agregaCarrito(int id, int cantidad) {
-        if(helperHandler.consultaStock(id, cantidad)) helperHandler.quitaStock(id, cantidad);
+        if(mySQLHelper.consultaStock(id, cantidad)) mySQLHelper.quitaStock(id, cantidad);
     }
 
     public List<List<String>> obtenerArticulos(List<Articulo> lista) {
-        return helperHandler.obtenerArticulos(lista);
+        return mySQLHelper.obtenerArticulos(lista);
     }
 
     public boolean modificarArticuloCarrito(int id, int cantidad) {
-        if(helperHandler.consultaStock(id, cantidad)) {
-            helperHandler.quitaStock(id, cantidad);
+        if(mySQLHelper.consultaStock(id, cantidad)) {
+            mySQLHelper.quitaStock(id, cantidad);
             return true;
         } else return false;
     }
 
     public void modificarQuitarArticuloCarrito(int id, int cantidad) {
-        helperHandler.agregarStock(id, cantidad);
+        mySQLHelper.agregarStock(id, cantidad);
     }
 
     public boolean consultaStock(int id, int cantidad) {
-        return helperHandler.consultaStock(id, cantidad);
+        return mySQLHelper.consultaStock(id, cantidad);
     }
 }

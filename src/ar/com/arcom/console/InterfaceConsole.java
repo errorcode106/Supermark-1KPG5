@@ -1,13 +1,9 @@
 package ar.com.arcom.console;
 
 import ar.com.arcom.Application;
-import ar.com.arcom.bin.Articulo;
-import ar.com.arcom.bin.Cliente;
 import ar.com.arcom.handlers.ActionHandler;
 import ar.com.arcom.handlers.Login;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class InterfaceConsole implements Login {
