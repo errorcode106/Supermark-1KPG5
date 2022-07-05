@@ -2,12 +2,12 @@ package ar.com.arcom;
 
 import ar.com.arcom.bin.Usuario;
 import ar.com.arcom.console.InterfaceConsole;
-import ar.com.arcom.ui.AdministradorUI;
+import ar.com.arcom.ui.UI;
 
 import javax.swing.*;
 
 public class Application {
-    public final String TITULO = "SuperMark v0.20220630";
+    public final String TITULO = "SuperMark v0.20220705";
     private Usuario usuario;
     private InterfaceConsole consoleInterface;
 
@@ -26,7 +26,7 @@ public class Application {
                 consoleInterface.play();
             }
             case 1 -> {
-                AdministradorUI ui = new AdministradorUI(this);
+                UI ui = new UI(this);
                 ui.setVisible(true);
             }
             default -> {

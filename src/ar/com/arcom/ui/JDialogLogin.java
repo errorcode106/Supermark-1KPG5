@@ -8,16 +8,15 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class JDialogLogin extends JDialog implements Login {
-    private AdministradorUI frame;
+    private UI frame;
     private EventoBoton eventoBoton;
     private final JPanel contentPane;
-    private JLabel jlb_notific, jlb_user, jlb_pass;
     private JTextField jtf_user;
     private JPasswordField jtf_password;
     private JButton jbn_login, jbn_join, jbn_exit;
     private JCheckBox jcb0;
 
-    public JDialogLogin(AdministradorUI frame) {
+    public JDialogLogin(UI frame) {
         this.frame = frame;
         eventoBoton = new EventoBoton(this, frame.getApplication());
 
@@ -106,7 +105,14 @@ public class JDialogLogin extends JDialog implements Login {
         return jcb0.isSelected();
     }
     @Override
-    public void endUp(int type) {
-        this.dispose();
+    public void endUp(int valor) {
+        switch (valor){
+            case -1 -> JOptionPane.showMessageDialog(null, "Usuario no existe");
+            case 0 -> JOptionPane.showMessageDialog(null, "Contraseña incorrecta");
+            case 1, 2 -> this.dispose();
+            case 3 -> JOptionPane.showMessageDialog(null, "Usuario ya existe");
+            case 4 -> JOptionPane.showMessageDialog(null, "Error al conectar al servidor, intente de nuevo");
+            default -> {}
+        }
     }
 }

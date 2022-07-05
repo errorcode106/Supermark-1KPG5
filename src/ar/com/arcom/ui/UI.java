@@ -1,15 +1,15 @@
 package ar.com.arcom.ui;
 
 import ar.com.arcom.Application;
-import ar.com.arcom.handlers.ClienteAdministradorUI;
 import ar.com.arcom.handlers.EventoBoton;
+import ar.com.arcom.handlers.UIHelper;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class AdministradorUI extends JFrame implements ClienteAdministradorUI {
+public class UI extends JFrame implements UIHelper {
     public final int CLIENTE_UI = 0, ADMINISTRADOR_UI = 10;
     public final int CLIENTE_VER_CARRITOS = 1, CLIENTE_VER_PRODUCTOS = 2, CLIENTE_MODIFICAR_CARRITO = 3;
     public final int ADMINISTRADOR_1 = 11, ADMINISTRADOR_2 = 12, ADMINISTRADOR_3 = 13;
@@ -27,7 +27,7 @@ public class AdministradorUI extends JFrame implements ClienteAdministradorUI {
 
     private boolean refresh;
 
-    public AdministradorUI(Application application) throws HeadlessException {
+    public UI (Application application) throws HeadlessException {
         super();
         this.application = application;
         eventoBoton = new EventoBoton(this, application);

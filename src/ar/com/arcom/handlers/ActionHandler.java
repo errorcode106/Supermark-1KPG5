@@ -25,45 +25,55 @@ public class ActionHandler {
      * @param login
      * @return 1: si coneccion fue exitosa y ademas el usuario es un cliente y 2 si es un administrador. 0: si la contraseña es incorrecta. -1: si el usuario no existe en la base de datos.
      */
-    public int iniciarSecision(Login login){
+    public void iniciarSecision(Login login){
+        int valor;
         user = login.getUser();
         if(mySQLHelper.existeElUsuario(user)){
             if (mySQLHelper.compararUsuarioContrasenia(user, login.getPassword())){
                 isLogin = true;
                 if (mySQLHelper.getType(user) == 0) {
                     application.setUsuario(new Cliente(user));
-                    return 1;
+                    valor =  1;
                 } else {
                     application.setUsuario(new Administrador(user));
-                    return 2;
+                    valor =  2;
                 }
-            } else return 0;
-        } else return -1;
+            } else valor =  0;
+        } else valor = -1;
+
+        login.endUp(valor);
     }
     /**
      *
      * @param login
-     * @return -1: si el usuario ya existe en la base de datos. 0: si ocurrio algun error, 1: si fue todo correcto.
+     * @return 3: si el usuario ya existe en la base de datos. 4: si ocurrio algun error, 1: si fue correcto.
      *
      */
-    public int registrarse(Login login){
+    public void registrarse(Login login){
+        int valor;
         user = login.getUser();
         if(!mySQLHelper.existeElUsuario(user)){
             int aux = mySQLHelper.añadeUsuario(user, login.getPassword());
-            if(aux != -1){
+            if(aux == 1){
                 isLogin = true;
                 application.setUsuario(new Cliente(user));
-                return 1;
-            } return 0;
-        } else return -1;
+                valor = 1;
+            } else valor =  4;
+        } else valor =  3;
+        login.endUp(valor);
     }
     public void exit() {
         System.exit(0);
     }
     public void cerrarSesion(){
+        if (application.getUsuario().getType() == 1)
+            for (Articulo articulo : ((Cliente)application.getUsuario()).getCarrito().getArticulos())
+                mySQLHelper.agregarStock(articulo.getId(),articulo.getCantidad());
         application.setUsuario(null);
+
         System.gc();
     }
+
     public List<List<String>> obtenerProductos(){
         return mySQLHelper.obtenerProductos();
     }
@@ -93,5 +103,16 @@ public class ActionHandler {
 
     public boolean consultaStock(int id, int cantidad) {
         return mySQLHelper.consultaStock(id, cantidad);
+    }
+
+    public boolean consultaSiExiste(int id){
+        return mySQLHelper.consultaSiExiste(id);
+    }
+
+    public void configuraUI(UIHelper uiHelper) {
+        uiHelper.configuraUI(2);
+    }
+    public void verCarrito(UIHelper uiHelper) {
+        uiHelper.configuraUI(3);
     }
 }

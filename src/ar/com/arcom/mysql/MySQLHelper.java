@@ -89,7 +89,7 @@ public class MySQLHelper {
         return Integer.parseInt(simpleQuery("user", user, "int"));
     }
     public int añadeUsuario(String user, String password) {
-        int aux = 0;
+        int aux = 4;
         openConection();
         if (openConnection){
             try {
@@ -103,7 +103,8 @@ public class MySQLHelper {
             }
         }
         clean();
-        return 0;
+
+        return aux;
     }
 
     private String simpleQuery(String label, String dataLabel, String dataType){
@@ -223,27 +224,6 @@ public class MySQLHelper {
         }
         return valor;
     }
-
-    public boolean consultaStock(int id, int cantidad) {
-        boolean aux = false;
-        openConection();
-        if (openConnection){
-            try {
-                statement = connection.createStatement();
-                String sql;
-                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db WHERE " + "id" + " = " + "'" + id + "'";
-                resultSet = statement.executeQuery(sql);
-                if(resultSet.next()) {
-                    aux = cantidad <= resultSet.getInt("stock");
-                }
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, e.getMessage());
-            }
-        }
-        clean();
-        return aux;
-    }
-
     public void quitaStock(int id, int cantidad) {
         int stock = 0;
         openConection();
@@ -262,7 +242,6 @@ public class MySQLHelper {
         }
         clean();
     }
-
     public List<List<String>> obtenerArticulos(List<Articulo> lista) {
         List<List<String>> articulos = new ArrayList<>();
         for (int i = 0; i < lista.size(); i++) {
@@ -271,7 +250,6 @@ public class MySQLHelper {
         }
         return articulos;
     }
-
     private List<String> dameArticulo(int id) {
         List<String> aux = new ArrayList<>();
         openConection();
@@ -294,7 +272,6 @@ public class MySQLHelper {
         clean();
         return aux;
     }
-
     public void agregarStock(int id, int cantidad) {
         int stock = 0;
         openConection();
@@ -312,5 +289,41 @@ public class MySQLHelper {
             }
         }
         clean();
+    }
+    public boolean consultaStock(int id, int cantidad) {
+        boolean aux = false;
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db WHERE " + "id" + " = " + "'" + id + "'";
+                resultSet = statement.executeQuery(sql);
+                if(resultSet.next()) {
+                    aux = cantidad <= resultSet.getInt("stock");
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+        return aux;
+    }
+    public boolean consultaSiExiste(int id) {
+        boolean aux = false;
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db WHERE " + "id" + " = " + "'" + id + "'";
+                resultSet = statement.executeQuery(sql);
+                aux = resultSet.next();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+        return aux;
     }
 }

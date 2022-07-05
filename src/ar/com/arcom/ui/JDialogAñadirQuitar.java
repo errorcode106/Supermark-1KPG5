@@ -7,7 +7,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class JDialogAñadirQuitar extends JDialog {
-    private AdministradorUI frame;
+    private UI frame;
     private EventoBoton eventoBoton;
     private final JPanel contentPane;
     private JLabel jlb_notific, jlb_user, jlb_pass;
