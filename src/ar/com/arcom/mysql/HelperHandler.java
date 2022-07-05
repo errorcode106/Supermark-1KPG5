@@ -1,4 +1,4 @@
-package ar.com.arcom.handlers;
+package ar.com.arcom.mysql;
 
 import ar.com.arcom.bin.Articulo;
 
@@ -19,15 +19,11 @@ Pasos para usar JDBC:
 
 
 public class HelperHandler {
-    private String JDBC_DRIVER;
-    private String DB_URL;
-    private String USER;
-    private String PASSWORD;
-
     private Connection connection;
     private Statement statement;
     private ResultSet resultSet;
 
+    private DataBaseInfo dataBaseInfo;
     private boolean openConnection;
 
     public HelperHandler() {
@@ -36,13 +32,18 @@ public class HelperHandler {
         resultSet = null;
 
         openConnection = false;
+        dataBaseInfo = new DataBaseInfo();
 
-        setDefaultDataBaseInfo();
     }
     private void openConection(){
         //PASO 1: Abrir una Conexion
         try {
-            connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            connection = DriverManager.getConnection(
+                    dataBaseInfo.getDB_URL(),
+                    dataBaseInfo.getUSER(),
+                    dataBaseInfo.getPASSWORD()
+            );
+
             openConnection = true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -78,31 +79,6 @@ public class HelperHandler {
         } //cierra finally try
     }
 
-    public void setDefaultDataBaseInfo(){
-        JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-        DB_URL = "jdbc:mysql://localhost:3306/supermark";
-        USER = "root";
-        PASSWORD = "1234567890f";
-    }
-    public void setDataBaseURL(String DB_URL){
-        this.DB_URL = DB_URL;
-    }
-    public void setUSER_PASWORD(String USER, String PASSWORD){
-        this.USER = USER;
-        this.PASSWORD = PASSWORD;
-    }
-
-    /*private void registerJDBCDriver(){
-        //PASO 2: Registrar JDBC driver
-        try{
-            Class.forName(JDBC_DRIVER);
-        }catch(Exception e){
-            // Resolver errores para Class.forName
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, e.getMessage());
-        }
-    }*/
-
     public boolean existeElUsuario(String user){
         return SimpleQueryCompare("user", user);
     }
@@ -119,7 +95,7 @@ public class HelperHandler {
             try {
                 statement = connection.createStatement();
                 String sql;
-                sql = "INSERT INTO `supermark`.`users_db` (id,user,password,type) VALUES(0,'" + user + "', '" + password + "',0)";
+                sql = "INSERT INTO bsi5brxpk0wz9ygdti6z.users_db (id,user,password,type) VALUES(0,'" + user + "', '" + password + "',0)";
                 statement.executeUpdate(sql);
                 aux = 1;
             } catch (SQLException e) {
@@ -137,7 +113,7 @@ public class HelperHandler {
             try {
                 statement = connection.createStatement();
                 String sql;
-                sql = "SELECT * FROM `supermark`.`users_db` WHERE " + label + " = " + "'" + dataLabel + "'";
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.users_db WHERE " + label + " = " + "'" + dataLabel + "'";
                 resultSet = statement.executeQuery(sql);
                 if(resultSet.next()) {
                     aux = extractData("type",dataType);
@@ -156,7 +132,7 @@ public class HelperHandler {
             try {
                 statement = connection.createStatement();
                 String sql;
-                sql = "SELECT * FROM `supermark`.`users_db` WHERE " + label + " = " + "'" + dataLabel + "'";
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.users_db WHERE " + label + " = " + "'" + dataLabel + "'";
                 resultSet = statement.executeQuery(sql);
                 if(resultSet.next()) aux = true;
             } catch (SQLException e) {
@@ -174,7 +150,7 @@ public class HelperHandler {
             try {
                 statement = connection.createStatement();
                 String sql;
-                sql = "SELECT * FROM `supermark`.`users_db` WHERE " + labelA + " = " + "'" + dataLabelA + "'";
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.users_db WHERE " + labelA + " = " + "'" + dataLabelA + "'";
                 resultSet = statement.executeQuery(sql);
                 if(resultSet.next()) {
                     try {
@@ -215,7 +191,7 @@ public class HelperHandler {
             try {
                 statement = connection.createStatement();
                 String sql;
-                sql = "SELECT * FROM supermark.products_db";
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db";
                 resultSet = statement.executeQuery(sql);
                 if(resultSet.next()) {
                     aux = extractData();
@@ -255,7 +231,7 @@ public class HelperHandler {
             try {
                 statement = connection.createStatement();
                 String sql;
-                sql = "SELECT * FROM `supermark`.`products_db` WHERE " + "id" + " = " + "'" + id + "'";
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db WHERE " + "id" + " = " + "'" + id + "'";
                 resultSet = statement.executeQuery(sql);
                 if(resultSet.next()) {
                     aux = cantidad <= resultSet.getInt("stock");
@@ -275,10 +251,10 @@ public class HelperHandler {
             try {
                 statement = connection.createStatement();
                 String sql;
-                sql = "SELECT * FROM `supermark`.`products_db` WHERE " + "id" + " = " + "'" + id + "'";
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db WHERE " + "id" + " = " + "'" + id + "'";
                 resultSet = statement.executeQuery(sql);
                 if(resultSet.next()) stock = resultSet.getInt("stock");
-                sql = "UPDATE `supermark`.`products_db` SET `stock` = '" + (stock-cantidad) + "' WHERE (`id` = '" + id +"')";
+                sql = "UPDATE bsi5brxpk0wz9ygdti6z.products_db SET `stock` = '" + (stock-cantidad) + "' WHERE (`id` = '" + id +"')";
                 statement.executeUpdate(sql);
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(null, e.getMessage());
@@ -303,7 +279,7 @@ public class HelperHandler {
             try {
                 statement = connection.createStatement();
                 String sql;
-                sql = "SELECT * FROM `supermark`.`products_db` WHERE id = " + "'" + id + "'";
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db WHERE id = " + "'" + id + "'";
                 resultSet = statement.executeQuery(sql);
                 if(resultSet.next()) {
                     aux.add(resultSet.getString("id"));
@@ -326,10 +302,10 @@ public class HelperHandler {
             try {
                 statement = connection.createStatement();
                 String sql;
-                sql = "SELECT * FROM `supermark`.`products_db` WHERE " + "id" + " = " + "'" + id + "'";
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db WHERE " + "id" + " = " + "'" + id + "'";
                 resultSet = statement.executeQuery(sql);
                 if(resultSet.next()) stock = resultSet.getInt("stock");
-                sql = "UPDATE `supermark`.`products_db` SET `stock` = '" + (stock+cantidad) + "' WHERE (`id` = '" + id +"')";
+                sql = "UPDATE bsi5brxpk0wz9ygdti6z.products_db SET `stock` = '" + (stock+cantidad) + "' WHERE (`id` = '" + id +"')";
                 statement.executeUpdate(sql);
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(null, e.getMessage());

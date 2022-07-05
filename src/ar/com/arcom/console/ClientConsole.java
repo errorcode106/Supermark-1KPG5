@@ -47,7 +47,7 @@ public class ClientConsole {
                 case 1 -> {
                     int id = ingreseID();
                     if(id != 0){
-                        int cantidad = ingreseCantidad();
+                        int cantidad = ingreseCantidadAgregar(id);
                         if (cantidad != 0) {
                             actionHandler.agregaCarrito(id,cantidad);
                             ((Cliente)(application.getUsuario())).agregar(new Articulo(id,cantidad));
@@ -82,7 +82,7 @@ public class ClientConsole {
                 case 1 -> {
                     int id = ingreseID();
                     if(id != 0){
-                        int cantidad = ingreseCantidad();
+                        int cantidad = ingreseCantidadAgregar(id);
                         if (cantidad != 0) {
                             actionHandler.modificarArticuloCarrito(id,cantidad);
                             ((Cliente)(application.getUsuario())).getCarrito().agregaCantidad(id,cantidad);
@@ -92,7 +92,7 @@ public class ClientConsole {
                 case 2 -> {
                     int id = ingreseID();
                     if(id != 0){
-                        int cantidad = ingreseCantidad();
+                        int cantidad = ingreseCantidadQuitar(id);
                         if (cantidad != 0) {
                             ((Cliente)(application.getUsuario())).getCarrito().quitarCantidad(id,cantidad);
                             actionHandler.modificarQuitarArticuloCarrito(id,cantidad);
@@ -228,19 +228,35 @@ public class ClientConsole {
         return id;
     }
 
-    private int ingreseCantidad(){
+    private int ingreseCantidadAgregar(int id){
         boolean aux = false;
         int cantidad;
         do{
             System.out.println("----------------------------------------------------");
-            System.out.println("Ingrese la cantidad a agregar o ingrese 0 para cancelar.");
+            System.out.println("Ingrese la cantidad o ingrese 0 para cancelar.");
             cantidad = scanner();
-            if(verificaCantidad(cantidad)) aux = true;
+            if(cantidad !=0 && verificaCantidadAgregar(id, cantidad)) aux = true;
         }while (!aux && cantidad != 0);
         return cantidad;
     }
-    private boolean verificaCantidad(int cantidad) {
-        return true;
+    private int ingreseCantidadQuitar(int id) {
+        boolean aux = false;
+        int cantidad;
+        do{
+            System.out.println("----------------------------------------------------");
+            System.out.println("Ingrese la cantidad o ingrese 0 para cancelar.");
+            cantidad = scanner();
+            if(cantidad !=0 && verificaCantidadQuitar(id, cantidad)) aux = true;
+        }while (!aux && cantidad != 0);
+        return cantidad;
+    }
+
+    private boolean verificaCantidadQuitar(int id, int cantidad) {
+        return ((Cliente)(application.getUsuario())).getCarrito().verificaCantidad(id,cantidad);
+    }
+
+    private boolean verificaCantidadAgregar(int id, int cantidad) {
+        return actionHandler.consultaStock(id, cantidad);
     }
     private boolean verificaID(int valor) {
         return true;

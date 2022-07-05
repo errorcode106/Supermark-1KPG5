@@ -4,9 +4,9 @@ import ar.com.arcom.Application;
 import ar.com.arcom.bin.Administrador;
 import ar.com.arcom.bin.Articulo;
 import ar.com.arcom.bin.Cliente;
+import ar.com.arcom.mysql.HelperHandler;
 
 import java.util.List;
-import java.util.Scanner;
 
 public class ActionHandler {
     private HelperHandler helperHandler;
@@ -89,5 +89,9 @@ public class ActionHandler {
 
     public void modificarQuitarArticuloCarrito(int id, int cantidad) {
         helperHandler.agregarStock(id, cantidad);
+    }
+
+    public boolean consultaStock(int id, int cantidad) {
+        return helperHandler.consultaStock(id, cantidad);
     }
 }

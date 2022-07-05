@@ -45,7 +45,12 @@ public class Carrito {
         while (articulos.get(i).getId() != id && i < articulos.size()) i++;
         if(i < articulos.size()) articulos.get(i).añadir(cantidad);
     }
-
+    public boolean verificaCantidad(int id, int cantidad){
+        int i = 0;
+        while (articulos.get(i).getId() != id && i < articulos.size()) i++;
+        if(i < articulos.size()) return cantidad <= articulos.get(i).getCantidad();
+        else return false;
+    }
     public void quitarCantidad(int id, int cantidad) {
         int i = 0;
         while (articulos.get(i).getId() != id && i < articulos.size()) i++;
