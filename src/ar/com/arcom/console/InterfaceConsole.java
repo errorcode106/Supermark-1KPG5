@@ -87,8 +87,7 @@ public class InterfaceConsole implements Login {
                 System.out.println("---------> La constrasena es incorrecta. <----------");
             }
             case 1 -> {
-                ClientConsole clientConsole = new ClientConsole(application,actionHandler);
-                clientConsole.configuraUI(1);
+                actionHandler.configuraUI(new ClientConsole(application,actionHandler),1);
             }
             case 2 -> {
                 AdminConsole adminConsole = new AdminConsole(application,actionHandler);

@@ -6,6 +6,7 @@ import ar.com.arcom.bin.Articulo;
 import ar.com.arcom.bin.Cliente;
 import ar.com.arcom.mysql.MySQLHelper;
 
+import javax.swing.*;
 import java.util.List;
 
 public class ActionHandler {
@@ -109,10 +110,7 @@ public class ActionHandler {
         return mySQLHelper.consultaSiExiste(id);
     }
 
-    public void configuraUI(UIHelper uiHelper) {
-        uiHelper.configuraUI(2);
-    }
-    public void verCarrito(UIHelper uiHelper) {
-        uiHelper.configuraUI(3);
+    public void configuraUI(UIHelper uiHelper, int valor) {
+        uiHelper.configuraUI(valor);
     }
 }

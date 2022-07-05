@@ -59,4 +59,9 @@ public class Carrito {
             if (articulos.get(i).getCantidad()<1) articulos.remove(i);
         }
     }
+    public boolean consultaSiExisteID(int id){
+        int i = 0;
+        while (articulos.get(i).getId() != id && i < articulos.size()) i++;
+        return i < articulos.size();
+    }
 }
