@@ -347,10 +347,19 @@ public class UI extends JFrame implements UIHelper {
             default -> {}
         }
     }
+
     @Override
-    public void cargaLista(int valor) {
+    public int getID(String valor, boolean aDeBaseDatos) {
+        return 0;
     }
+
     @Override
-    public void ultimosArreglos(int valor) {
+    public int getCantidad(int id, String valor) {
+        return 0;
+    }
+
+    @Override
+    public void error(int valor) {
+
     }
 }

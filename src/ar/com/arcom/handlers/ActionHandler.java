@@ -6,10 +6,13 @@ import ar.com.arcom.bin.Articulo;
 import ar.com.arcom.bin.Cliente;
 import ar.com.arcom.mysql.MySQLHelper;
 
-import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ActionHandler {
+    // ----------------------------------------------------------------
+    // Atributos
+    // ----------------------------------------------------------------
     private MySQLHelper mySQLHelper;
     private Application application;
     private boolean isLogin;
@@ -81,26 +84,69 @@ public class ActionHandler {
     // ----------------------------------------------------------------
     // Métodos de Cliente
     // ----------------------------------------------------------------
-    public List<List<String>> obtenerProductos(){
-        return mySQLHelper.obtenerProductos();
+    public void agregaAlCarrito(UIHelper uiHelper) {
+        int id = uiHelper.getID("agregar",true);
+
+        if(id != 0 && mySQLHelper.consultaStock(id,1)){
+            int cantidad = uiHelper.getCantidad(id, "agregar");
+            if (cantidad != 0) {
+                if(mySQLHelper.consultaStock(id, cantidad)){
+                    if (((Cliente)(application.getUsuario())).getCarrito().consultaSiExisteID(id)){
+                        mySQLHelper.quitaStock(id, cantidad);
+                        ((Cliente)(application.getUsuario())).getCarrito().agregaCantidad(id, cantidad);
+                        ((Cliente)(application.getUsuario())).getCarrito().recalcularTotales();
+                    } else ((Cliente)(application.getUsuario())).agregar(
+                            mySQLHelper.crearArticulo(id,cantidad)
+                    );
+                } else uiHelper.error(0);
+            }
+        } uiHelper.error(1);
     }
-    public String getUser() {
-        return user;
+    public void agregarCantidadAlArticuloEnCarrito(UIHelper uiHelper){
+        int id = uiHelper.getID("agregar", false);
+
+        if(id != 0){
+            int cantidad = uiHelper.getCantidad(id, "agregar");
+            if (cantidad != 0) {
+                if(mySQLHelper.consultaStock(id, cantidad)){
+                    mySQLHelper.quitaStock(id, cantidad);
+                    ((Cliente)(application.getUsuario())).getCarrito().agregaCantidad(id, cantidad);
+                    ((Cliente)(application.getUsuario())).getCarrito().recalcularTotales();
+                } else uiHelper.error(0);
+            }
+        }
     }
-    public void agregaCarrito(int id, int cantidad) {
-        if(mySQLHelper.consultaStock(id, cantidad)) mySQLHelper.quitaStock(id, cantidad);
+    public void quitarCantidadAlArticuloEnCarrito(UIHelper uiHelper) {
+        int id = uiHelper.getID("quitar", false);
+
+        if(id != 0){
+            int cantidad = uiHelper.getCantidad(id, "quitar");
+            if (cantidad != 0) {
+                if(((Cliente)(application.getUsuario())).getCarrito().verificaCantidad(id, cantidad)){
+                    mySQLHelper.agregarStock(id, cantidad);
+                    ((Cliente)(application.getUsuario())).getCarrito().quitarCantidad(id, cantidad);
+                    ((Cliente)(application.getUsuario())).getCarrito().recalcularTotales();
+                } else uiHelper.error(0);
+            }
+        }
+    }
+
+    public void comprar() {
+        // comparar si esta bien la lista de articulos con la lista de pedidos de la base de datos
+
+    }
+    public void vaciarCarrito() {
+        for(Articulo articulo : ((Cliente)(application.getUsuario())).getCarrito().getArticulos())
+            mySQLHelper.agregarStock(articulo.getId(),articulo.getCantidad());
+        ((Cliente)(application.getUsuario())).getCarrito().setArticulos(null);
+        System.gc();
+    }
+
+    public List<List<String>> obtenerProductos(boolean con_existencias){
+        return mySQLHelper.obtenerProductos(con_existencias);
     }
     public List<List<String>> obtenerArticulos(List<Articulo> lista) {
-        return mySQLHelper.obtenerArticulos(lista);
-    }
-    public boolean modificarArticuloCarrito(int id, int cantidad) {
-        if(mySQLHelper.consultaStock(id, cantidad)) {
-            mySQLHelper.quitaStock(id, cantidad);
-            return true;
-        } else return false;
-    }
-    public void modificarQuitarArticuloCarrito(int id, int cantidad) {
-        mySQLHelper.agregarStock(id, cantidad);
+        return (lista != null) ? mySQLHelper.obtenerArticulos(lista) : new ArrayList<List<String>>();
     }
     public boolean consultaStock(int id, int cantidad) {
         return mySQLHelper.consultaStock(id, cantidad);

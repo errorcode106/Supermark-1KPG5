@@ -7,12 +7,16 @@ import ar.com.arcom.handlers.Login;
 import java.util.Scanner;
 
 public class InterfaceConsole implements Login {
+    // ----------------------------------------------------------------
     // Atributos
+    // ----------------------------------------------------------------
     private Application application;
     private ActionHandler actionHandler;
     private Scanner scanner;
 
+    // ----------------------------------------------------------------
     // Constructor
+    // ----------------------------------------------------------------
     public InterfaceConsole(Application application) {
         this.application = application;
         scanner = new Scanner(System.in);

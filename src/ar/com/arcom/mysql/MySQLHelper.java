@@ -5,6 +5,7 @@ import ar.com.arcom.bin.Articulo;
 import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -76,7 +77,7 @@ public class MySQLHelper {
                 se.printStackTrace();
                 JOptionPane.showMessageDialog(null, se.getMessage());
             }
-        } //cierra finally try
+        }
     }
 
     public boolean existeElUsuario(String user){
@@ -117,7 +118,7 @@ public class MySQLHelper {
                 sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.users_db WHERE " + label + " = " + "'" + dataLabel + "'";
                 resultSet = statement.executeQuery(sql);
                 if(resultSet.next()) {
-                    aux = extractData("type",dataType);
+                    aux = extractDataProductos("type",dataType);
                 }
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(null, e.getMessage());
@@ -168,7 +169,7 @@ public class MySQLHelper {
         clean();
         return aux.equals(dataLabelB);
     }
-    private String extractData(String label,String dataType){
+    private String extractDataProductos(String label, String dataType){
         //PASO 3: Extraer datos de un ResulSet
         String valor = "";
         try {
@@ -182,10 +183,11 @@ public class MySQLHelper {
         return valor;
     }
 
-    public List<List<String>> obtenerProductos() {
-        return dameProducto();
+    public List<List<String>> obtenerProductos(boolean con_existencias) {
+        return dameProducto(con_existencias);
     }
-    private List<List<String>> dameProducto(){
+
+    private List<List<String>> dameProducto(boolean con_existencias){
         List<List<String>> aux = new ArrayList<>();
         openConection();
         if (openConnection){
@@ -195,7 +197,8 @@ public class MySQLHelper {
                 sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db";
                 resultSet = statement.executeQuery(sql);
                 if(resultSet.next()) {
-                    aux = extractData();
+                    List<String> labels = Arrays.asList("id","nombre","descripcion","precio","stock");
+                    aux = extractDataProductos(con_existencias, labels);
                 }
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(null, e.getMessage());
@@ -205,18 +208,16 @@ public class MySQLHelper {
         return aux;
     }
 
-    private List<List<String>> extractData() {
+    private List<List<String>> extractDataProductos(boolean con_existencias, List<String> labels) {
         //PASO 3: Extraer datos de un ResulSet
         List<List<String>> valor = new ArrayList<>();
         try {
             do{
                 List<String> aux = new ArrayList<>();
-                aux.add(resultSet.getString("id"));
-                aux.add(resultSet.getString("nombre"));
-                aux.add(resultSet.getString("descripcion"));
-                aux.add(resultSet.getString("precio"));
-                aux.add(resultSet.getString("stock"));
-                valor.add(aux);
+                if (resultSet.getInt("stock") > 0 || !con_existencias) {
+                    for (String label : labels) aux.add(resultSet.getString(label));
+                    valor.add(aux);
+                }
             }while (resultSet.next());
         } catch (SQLException e) {
             e.printStackTrace();
@@ -245,12 +246,19 @@ public class MySQLHelper {
     public List<List<String>> obtenerArticulos(List<Articulo> lista) {
         List<List<String>> articulos = new ArrayList<>();
         for (int i = 0; i < lista.size(); i++) {
-            articulos.add(dameArticulo(lista.get(i).getId()));
+            articulos.add(dameArticulo(lista.get(i).getId(),
+                    Arrays.asList("id","nombre","descripcion","precio")));
+
             articulos.get(articulos.size()-1).add(String.valueOf(lista.get(i).getCantidad()));
+
+            articulos.get(articulos.size()-1).add(
+                    String.valueOf(lista.get(i).getCantidad() * Float.parseFloat(
+                            articulos.get(articulos.size()-1).get(articulos.get(articulos.size()-1).size()-2)
+                    )));
         }
         return articulos;
     }
-    private List<String> dameArticulo(int id) {
+    private List<String> dameArticulo(int id, List<String> labels) {
         List<String> aux = new ArrayList<>();
         openConection();
         if (openConnection){
@@ -259,13 +267,9 @@ public class MySQLHelper {
                 String sql;
                 sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db WHERE id = " + "'" + id + "'";
                 resultSet = statement.executeQuery(sql);
-                if(resultSet.next()) {
-                    aux.add(resultSet.getString("id"));
-                    aux.add(resultSet.getString("nombre"));
-                    aux.add(resultSet.getString("descripcion"));
-                    aux.add(resultSet.getString("precio"));
-                }
+                if (resultSet.next()) for (String label : labels) aux.add(resultSet.getString(label));
             } catch (SQLException e) {
+
                 JOptionPane.showMessageDialog(null, e.getMessage());
             }
         }
@@ -325,5 +329,30 @@ public class MySQLHelper {
         }
         clean();
         return aux;
+    }
+
+    public Articulo crearArticulo(int id, int cantidad) {
+        quitaStock(id, cantidad);
+        Articulo articulo = null;
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db WHERE " + "id" + " = " + "'" + id + "'";
+                resultSet = statement.executeQuery(sql);
+                if(resultSet.next()) {
+                    articulo = new Articulo();
+                    List<String> labels = Arrays.asList("id","nombre","descripcion","precio");
+                    for (String label : labels) articulo.set(label,resultSet.getString(label));
+                    articulo.set("cantidad",String.valueOf(cantidad));
+                    articulo.calculaTotal();
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+        return articulo;
     }
 }
