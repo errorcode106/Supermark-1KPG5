@@ -15,12 +15,18 @@ public class ActionHandler {
     private boolean isLogin;
     private String user;
 
+    // ----------------------------------------------------------------
+    // Constructor
+    // ----------------------------------------------------------------
     public ActionHandler(Application application) {
         this.application = application;
         this.mySQLHelper = new MySQLHelper();
         isLogin = false;
     }
 
+    // ----------------------------------------------------------------
+    // Métodos de Login
+    // ----------------------------------------------------------------
     /**
      *
      * @param login
@@ -63,9 +69,6 @@ public class ActionHandler {
         } else valor =  3;
         login.endUp(valor);
     }
-    public void exit() {
-        System.exit(0);
-    }
     public void cerrarSesion(){
         if (application.getUsuario().getType() == 1)
             for (Articulo articulo : ((Cliente)application.getUsuario()).getCarrito().getArticulos())
@@ -75,41 +78,48 @@ public class ActionHandler {
         System.gc();
     }
 
+    // ----------------------------------------------------------------
+    // Métodos de Cliente
+    // ----------------------------------------------------------------
     public List<List<String>> obtenerProductos(){
         return mySQLHelper.obtenerProductos();
     }
-
     public String getUser() {
         return user;
     }
-
     public void agregaCarrito(int id, int cantidad) {
         if(mySQLHelper.consultaStock(id, cantidad)) mySQLHelper.quitaStock(id, cantidad);
     }
-
     public List<List<String>> obtenerArticulos(List<Articulo> lista) {
         return mySQLHelper.obtenerArticulos(lista);
     }
-
     public boolean modificarArticuloCarrito(int id, int cantidad) {
         if(mySQLHelper.consultaStock(id, cantidad)) {
             mySQLHelper.quitaStock(id, cantidad);
             return true;
         } else return false;
     }
-
     public void modificarQuitarArticuloCarrito(int id, int cantidad) {
         mySQLHelper.agregarStock(id, cantidad);
     }
-
     public boolean consultaStock(int id, int cantidad) {
         return mySQLHelper.consultaStock(id, cantidad);
     }
-
     public boolean consultaSiExiste(int id){
         return mySQLHelper.consultaSiExiste(id);
     }
 
+    // ----------------------------------------------------------------
+    // Métodos de Administrador
+    // ----------------------------------------------------------------
+
+
+    // ----------------------------------------------------------------
+    // Métodos generales
+    // ----------------------------------------------------------------
+    public void exit() {
+        System.exit(0);
+    }
     public void configuraUI(UIHelper uiHelper, int valor) {
         uiHelper.configuraUI(valor);
     }

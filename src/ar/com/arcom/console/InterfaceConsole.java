@@ -30,7 +30,7 @@ public class InterfaceConsole implements Login {
                 case 0 -> actionHandler.exit();
                 case 1 -> actionHandler.iniciarSecision(this);
                 case 2 -> actionHandler.registrarse(this);
-                default -> {}
+                default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);
     }
@@ -50,10 +50,16 @@ public class InterfaceConsole implements Login {
         System.out.println("----------------------------------------------------");
         return scanner();
     }
-    protected int scanner(){
+    private int scanner(){
+        String valor = "";
+        int i;
+        i = 0;
         System.out.print("Respuesta: ");
         Scanner scanner = new Scanner(System.in);
-        return scanner.nextInt();
+        valor = scanner.next();
+        while(i < valor.length() && Character.isDigit(valor.charAt(i))) i++;
+        if (i < valor.length()) valor ="-1";
+        return Integer.parseInt(valor);
     }
 
     // ----------------------------------------------------------------
@@ -91,7 +97,7 @@ public class InterfaceConsole implements Login {
             }
             case 2 -> {
                 AdminConsole adminConsole = new AdminConsole(application,actionHandler);
-                adminConsole.menuAdministrador();
+                adminConsole.menuPrincipalFlujo();
             }
             case 3 -> {
                 System.out.println("----------------------------------------------------");

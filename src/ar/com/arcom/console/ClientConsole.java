@@ -24,9 +24,15 @@ public class ClientConsole implements UIHelper {
     // Métodos de flujo
     // ----------------------------------------------------------------
     private int scanner(){
+        String valor = "";
+        int i;
+        i = 0;
         System.out.print("Respuesta: ");
         Scanner scanner = new Scanner(System.in);
-        return scanner.nextInt();
+        valor = scanner.next();
+        while(i < valor.length() && Character.isDigit(valor.charAt(i))) i++;
+        if (i < valor.length()) valor ="-1";
+        return Integer.parseInt(valor);
     }
     public void menuClienteFlujo(){
         int respuesta;
@@ -36,7 +42,7 @@ public class ClientConsole implements UIHelper {
                 case 0 -> actionHandler.cerrarSesion();
                 case 1 -> actionHandler.configuraUI(this,2);
                 case 2 -> actionHandler.configuraUI(this,3);
-                default -> {}
+                default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);
     }
@@ -57,7 +63,7 @@ public class ClientConsole implements UIHelper {
                 }
                 case 2 -> actionHandler.configuraUI(this,3);
                 case 3 -> {}
-                default -> {}
+                default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);
     }
@@ -69,7 +75,7 @@ public class ClientConsole implements UIHelper {
                 case 1 -> {menuVerProductoFlujo();}
                 case 2 -> {menuModificarProductoCarritoFlujo();}
                 case 3 -> {menuCompraFlujo();}
-                default -> {}
+                default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);
     }
@@ -98,7 +104,7 @@ public class ClientConsole implements UIHelper {
                         }
                     }
                 }
-                default -> {}
+                default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);
     }
@@ -263,10 +269,24 @@ public class ClientConsole implements UIHelper {
     }
     @Override
     public void cargaLista(int valor) {
-
+        switch (valor){
+            case 0 -> {}
+            case 1 -> {}
+            case 2 -> {}
+            case 3 -> {}
+            case 4 -> {}
+            default -> {}
+        }
     }
     @Override
     public void ultimosArreglos(int valor) {
-
+        switch (valor){
+            case 0 -> {}
+            case 1 -> {}
+            case 2 -> {}
+            case 3 -> {}
+            case 4 -> {}
+            default -> {}
+        }
     }
 }
