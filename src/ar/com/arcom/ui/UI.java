@@ -362,4 +362,24 @@ public class UI extends JFrame implements UIHelper {
     public void error(int valor) {
 
     }
+
+    @Override
+    public String getNombre() {
+        return null;
+    }
+
+    @Override
+    public String getDescipcion() {
+        return null;
+    }
+
+    @Override
+    public float getPrecio() {
+        return 0;
+    }
+
+    @Override
+    public int getStock() {
+        return 0;
+    }
 }

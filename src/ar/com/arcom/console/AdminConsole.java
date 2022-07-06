@@ -3,12 +3,14 @@ package ar.com.arcom.console;
 import ar.com.arcom.Application;
 import ar.com.arcom.bin.Cliente;
 import ar.com.arcom.handlers.ActionHandler;
+import ar.com.arcom.handlers.UIHelper;
 
+import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-public class AdminConsole {
+public class AdminConsole implements UIHelper {
     // ----------------------------------------------------------------
     // Atributos
     // ----------------------------------------------------------------
@@ -33,9 +35,9 @@ public class AdminConsole {
         do {
             respuesta = menuPrincipal();
             switch (respuesta){
-                case 0 -> {}
-                case 1 -> {}
-                case 2 -> {}
+                case 0 -> actionHandler.cerrarSesion();
+                case 1 -> actionHandler.configuraUI(this,2);
+                case 2 -> actionHandler.configuraUI(this,3);
                 case 3 -> {}
                 case 4 -> {}
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
@@ -47,34 +49,29 @@ public class AdminConsole {
         do {
             respuesta = menuVerProductos();
             switch (respuesta){
-                case 1 -> {}
-                case 2 -> {}
+                case 1 -> actionHandler.modificarProducto(this);
+                case 2 -> actionHandler.cargarProducto(this);
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);
     }
 
-    private int scanner(){
-        String valor = "";
-        int i;
-        i = 0;
-        System.out.print("Respuesta: ");
-        Scanner scanner = new Scanner(System.in);
-        valor = scanner.next();
-        while(i < valor.length() && Character.isDigit(valor.charAt(i))) i++;
-        if (i < valor.length()) valor ="-1";
-        return Integer.parseInt(valor);
+    public void menuModificalProductoFlujo(){
+        int respuesta;
+        do {
+            respuesta = menuModificarProducto();
+            switch (respuesta){
+                case 1 -> actionHandler.modificarProducto(this);
+                case 2 -> actionHandler.cargarProducto(this);
+                default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
+            }
+        }while (respuesta != 0);
     }
-
     // ----------------------------------------------------------------
     // Métodos de opciones
     // ----------------------------------------------------------------
     public int menuPrincipal() {
-        System.out.println("----------------------------------------------------");
-        System.out.println(application.TITULO + " : Menu Principal (Administrador)");
-        System.out.println("Usuario: " + application.getUsuario().getNombre().toUpperCase().charAt(0)
-                + application.getUsuario().getNombre().substring(1));
-        System.out.println("----------------------------------------------------");
+        tituloMenu("Menu Principal (Administrador)");
         System.out.println("Ingrese [valor] correspondiente a la opcion elegida.");
         System.out.println("[1] Ver listado de productos");
         System.out.println("[2] Modificar datos de los productos");
@@ -83,7 +80,7 @@ public class AdminConsole {
         System.out.println("");
         System.out.println("[0] Cerrar Sesion");
         System.out.println("----------------------------------------------------");
-        return scanner();
+        return scannerInt();
     }
     public int menuVerProductos(){
         tituloMenu("Menu Ver Productos (Administrador)");
@@ -94,9 +91,37 @@ public class AdminConsole {
         System.out.println("");
         System.out.println("[0] Volver");
         System.out.println("----------------------------------------------------");
-        return scanner();
+        return scannerInt();
+    }
+    public int menuModificarProducto(){
+        tituloMenu("Menu Ver Productos (Administrador)");
+        cargaLista(LISTA_PRODUCTOS);
+        System.out.println("Ingrese [valor] correspondiente a la opcion elegida.");
+        System.out.println("[1] Agregar Cantidad.");
+        System.out.println("[2] Quitar Cantidad.");
+        System.out.println("[3] Modificar Nombre.");
+        System.out.println("[4] Modificar Detalle.");
+        System.out.println("[5] Modificar Precio.");
+        System.out.println("");
+        System.out.println("[0] Volver");
+        System.out.println("----------------------------------------------------");
+        return scannerInt();
     }
 
+    // ----------------------------------------------------------------
+    // Métodos generales
+    // ----------------------------------------------------------------
+    private int scannerInt(){
+        String valor = "";
+        int i;
+        i = 0;
+        System.out.print("Respuesta: ");
+        Scanner scanner = new Scanner(System.in);
+        valor = scanner.next();
+        while(i < valor.length() && Character.isDigit(valor.charAt(i))) i++;
+        if (i < valor.length()) valor ="-1";
+        return Integer.parseInt(valor);
+    }
     private void tituloMenu(String cadena){
         System.out.println("----------------------------------------------------");
         System.out.println(application.TITULO + " : " + cadena);
@@ -104,7 +129,7 @@ public class AdminConsole {
                 + application.getUsuario().getNombre().substring(1));
         System.out.println("----------------------------------------------------");
     }
-    private void tablaFix(String[] etiquetas, List<List<String>> lista){
+    private void tablaFix(String[] etiquetas, List<List<String>> lista, boolean necesitaTotal){
         String[] separador = new String[etiquetas.length];
         Arrays.fill(separador, "");
         int[] mayorPeso = new int[etiquetas.length];
@@ -126,6 +151,7 @@ public class AdminConsole {
             System.out.print(etiquetas[i]+separador[i]+ " | ");
         }
         System.out.println("");
+        System.out.println("----------------------------------------------------");
 
         for (List<String> cadena : lista) {
             Arrays.fill(separador, "");
@@ -138,19 +164,37 @@ public class AdminConsole {
             }
             System.out.println();
         }
+
+        if (necesitaTotal) {
+            if (((Cliente)(application.getUsuario())).getCarrito().getArticulos() != null){
+                int aux = 0;
+                for (int i = 0; i < mayorPeso.length; i++) aux += mayorPeso[i]+3;
+                aux -= (3 + 7 + String.valueOf(((Cliente)(application.getUsuario())).getCarrito().getTotales()).length());
+
+                Arrays.fill(separador, "");
+                for (int i = 0; i < aux; i++) separador[0] += " ";
+
+                System.out.println(separador[0] + "Total: "
+                        + ((Cliente)(application.getUsuario())).getCarrito().getTotales());
+            } else {
+                System.out.println(separador[0] + "Total: "
+                        + 0.0);
+            }
+        }
     }
     private void cargaLista(int valor) {
         switch (valor){
             case 0 -> {
                 System.out.println("Lista de productos disponibles");
                 tablaFix(new String[]{"ID","Producto","Descripcion","Precio","Existencias"},
-                        actionHandler.obtenerProductos(true));
+                        actionHandler.obtenerProductos(false),false);
                 System.out.println("----------------------------------------------------");
             }
             case 1 -> {
-                System.out.println("Lista de productos en el carrito de compras");
-                tablaFix(new String[]{"ID","Producto","Descripcion","Precio","Cantidad", "Total"},
-                        actionHandler.obtenerArticulos(((Cliente)(application.getUsuario())).getCarrito().getArticulos()));
+                System.out.println("Lista de ...");
+                tablaFix(new String[]{"ID","Producto","Descripcion","Precio","Cantidad", "Sub Total"},
+                        actionHandler.obtenerArticulos(((Cliente)(application.getUsuario())).getCarrito().getArticulos()),
+                        true);
                 System.out.println("----------------------------------------------------");
             }
             default -> {
@@ -158,5 +202,76 @@ public class AdminConsole {
                 System.out.println("----------------------------------------------------");
             }
         }
+    }
+
+    // ----------------------------------------------------------------
+    // Métodos de implementacion
+    // ----------------------------------------------------------------
+    @Override
+    public void configuraUI(int valor) {
+        switch (valor){
+            case 1 -> menuPrincipalFlujo();
+            case 2 -> menuVerProductoFlujo();
+            case 3 -> menuModificalProductoFlujo();
+            case 4 -> {}
+            case 5 -> {}
+            default -> {}
+        }
+    }
+    @Override
+    public int getID(String valor, boolean aDeBaseDatos) {
+        return 0;
+    }
+    @Override
+    public int getCantidad(int id, String valor) {
+        return 0;
+    }
+    @Override
+    public void error(int valor) {
+
+    }
+
+    @Override
+    public String getNombre() {
+        String nombre;
+        System.out.println("----------------------------------------------------");
+        System.out.println("Ingrese el nombre del producto.");
+
+        Scanner scanner = new Scanner(System.in);
+        nombre = scanner.nextLine();
+        return nombre;
+    }
+
+    @Override
+    public String getDescipcion() {
+        String descripcion;
+        System.out.println("----------------------------------------------------");
+        System.out.println("Ingrese la descripcion del producto.");
+
+        Scanner scanner = new Scanner(System.in);
+        descripcion = scanner.nextLine();
+        return descripcion;
+    }
+
+    @Override
+    public float getPrecio() {
+        float precio;
+        System.out.println("----------------------------------------------------");
+        System.out.println("Ingrese el precio del producto.");
+
+        Scanner scanner = new Scanner(System.in);
+        precio = scanner.nextFloat();
+        return precio;
+    }
+
+    @Override
+    public int getStock() {
+        int stock;
+        System.out.println("----------------------------------------------------");
+        System.out.println("Ingrese el stock del producto.");
+
+        Scanner scanner = new Scanner(System.in);
+        stock = scanner.nextInt();
+        return stock;
     }
 }

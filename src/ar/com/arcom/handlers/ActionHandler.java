@@ -1,11 +1,11 @@
 package ar.com.arcom.handlers;
 
 import ar.com.arcom.Application;
-import ar.com.arcom.bin.Administrador;
-import ar.com.arcom.bin.Articulo;
-import ar.com.arcom.bin.Cliente;
+import ar.com.arcom.bin.*;
+import ar.com.arcom.console.AdminConsole;
 import ar.com.arcom.mysql.MySQLHelper;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +63,7 @@ public class ActionHandler {
         int valor;
         user = login.getUser();
         if(!mySQLHelper.existeElUsuario(user)){
-            int aux = mySQLHelper.añadeUsuario(user, login.getPassword());
+            int aux = mySQLHelper.agregaUsuario(user, login.getPassword());
             if(aux == 1){
                 isLogin = true;
                 application.setUsuario(new Cliente(user));
@@ -73,7 +73,7 @@ public class ActionHandler {
         login.endUp(valor);
     }
     public void cerrarSesion(){
-        if (application.getUsuario().getType() == 1)
+        if (application.getUsuario().getType() == 0)
             for (Articulo articulo : ((Cliente)application.getUsuario()).getCarrito().getArticulos())
                 mySQLHelper.agregarStock(articulo.getId(),articulo.getCantidad());
         application.setUsuario(null);
@@ -158,8 +158,21 @@ public class ActionHandler {
     // ----------------------------------------------------------------
     // Métodos de Administrador
     // ----------------------------------------------------------------
-
-
+    public void modificarProducto(UIHelper uiHelper) {
+        JOptionPane.showMessageDialog(null, uiHelper.getNombre());
+    }
+    public boolean consultaSiExisteProducto(String nombre) {
+        return mySQLHelper.consultaSiExisteNombre(nombre);
+    }
+    public void cargarProducto(UIHelper uiHelper) {
+        String nombre = uiHelper.getNombre();
+        if (!consultaSiExisteProducto(nombre))
+            mySQLHelper.cargarProducto(new Producto(0,nombre,
+                    uiHelper.getDescipcion(),
+                    uiHelper.getPrecio(),
+                    uiHelper.getStock()
+            ));
+    }
     // ----------------------------------------------------------------
     // Métodos generales
     // ----------------------------------------------------------------

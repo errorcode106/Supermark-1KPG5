@@ -1,6 +1,7 @@
 package ar.com.arcom.mysql;
 
 import ar.com.arcom.bin.Articulo;
+import ar.com.arcom.bin.Producto;
 
 import javax.swing.*;
 import java.sql.*;
@@ -89,7 +90,7 @@ public class MySQLHelper {
     public int getType(String user) {
         return Integer.parseInt(simpleQuery("user", user, "int"));
     }
-    public int añadeUsuario(String user, String password) {
+    public int agregaUsuario(String user, String password) {
         int aux = 4;
         openConection();
         if (openConnection){
@@ -107,7 +108,6 @@ public class MySQLHelper {
 
         return aux;
     }
-
     private String simpleQuery(String label, String dataLabel, String dataType){
         String aux = "";
         openConection();
@@ -182,11 +182,9 @@ public class MySQLHelper {
         System.out.println(valor);
         return valor;
     }
-
     public List<List<String>> obtenerProductos(boolean con_existencias) {
         return dameProducto(con_existencias);
     }
-
     private List<List<String>> dameProducto(boolean con_existencias){
         List<List<String>> aux = new ArrayList<>();
         openConection();
@@ -207,7 +205,6 @@ public class MySQLHelper {
         clean();
         return aux;
     }
-
     private List<List<String>> extractDataProductos(boolean con_existencias, List<String> labels) {
         //PASO 3: Extraer datos de un ResulSet
         List<List<String>> valor = new ArrayList<>();
@@ -269,7 +266,6 @@ public class MySQLHelper {
                 resultSet = statement.executeQuery(sql);
                 if (resultSet.next()) for (String label : labels) aux.add(resultSet.getString(label));
             } catch (SQLException e) {
-
                 JOptionPane.showMessageDialog(null, e.getMessage());
             }
         }
@@ -294,6 +290,8 @@ public class MySQLHelper {
         }
         clean();
     }
+
+
     public boolean consultaStock(int id, int cantidad) {
         boolean aux = false;
         openConection();
@@ -354,5 +352,65 @@ public class MySQLHelper {
         }
         clean();
         return articulo;
+    }
+
+    public boolean cargarProducto(Producto producto) {
+        boolean aux = false;
+        if (!consultaSiExisteNombre(producto.getNombre())){
+            openConection();
+            if (openConnection){
+                try {
+                    statement = connection.createStatement();
+                    String sql;
+                    sql = "INSERT INTO bsi5brxpk0wz9ygdti6z.products_db (id,nombre,descripcion,precio,stock) VALUES(0,'"
+                            + producto.getNombre() + "', '"
+                            + producto.getDescripcion() + "', "
+                            + producto.getPrecio() +", "
+                            + producto.getStock()
+                            + ")";
+                    statement.executeUpdate(sql);
+                    aux = true;
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(null, e.getMessage());
+                }
+            }
+            clean();
+        }
+        return aux;
+    }
+
+    public boolean consultaSiExisteNombre(String nombre) {
+        boolean aux = false;
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db WHERE " + "nombre" + " = " + "'" + nombre + "'";
+                resultSet = statement.executeQuery(sql);
+                aux = resultSet.next();
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+        return aux;
+    }
+    public int buscaPorNombre(String nombre) {
+        int aux = 0;
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "SELECT * FROM supermark.products_db where nombre regexp '" + nombre + "'";
+                resultSet = statement.executeQuery(sql);
+                if (resultSet.next()) aux = resultSet.getInt("id");
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+        return aux;
     }
 }

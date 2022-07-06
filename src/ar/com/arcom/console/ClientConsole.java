@@ -29,17 +29,7 @@ public class ClientConsole implements UIHelper {
     // ----------------------------------------------------------------
     // Métodos de flujo
     // ----------------------------------------------------------------
-    private int scanner(){
-        String valor = "";
-        int i;
-        i = 0;
-        System.out.print("Respuesta: ");
-        Scanner scanner = new Scanner(System.in);
-        valor = scanner.next();
-        while(i < valor.length() && Character.isDigit(valor.charAt(i))) i++;
-        if (i < valor.length()) valor ="-1";
-        return Integer.parseInt(valor);
-    }
+
     public void menuClienteFlujo(){
         int respuesta;
         do {
@@ -64,7 +54,7 @@ public class ClientConsole implements UIHelper {
             }
         }while (respuesta != 0);
     }
-    public void menuVerCarritoFlujo(){
+    public void menuPrincipalFlujo(){
         int respuesta;
         do {
             respuesta = menuVerCarrito();
@@ -84,6 +74,17 @@ public class ClientConsole implements UIHelper {
             switch (respuesta){
                 case 1 -> actionHandler.agregarCantidadAlArticuloEnCarrito(this);
                 case 2 -> actionHandler.quitarCantidadAlArticuloEnCarrito(this);
+                default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
+            }
+        }while (respuesta != 0);
+    }
+    public void menuCompraFlujo(){
+        int respuesta;
+        do {
+            respuesta = menuCompra();
+            switch (respuesta){
+                case 1 -> actionHandler.comprar();
+                //case 2 -> actionHandler.configuraUI(this,3);
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);
@@ -161,6 +162,17 @@ public class ClientConsole implements UIHelper {
     // ----------------------------------------------------------------
     // Métodos generales
     // ----------------------------------------------------------------
+    private int scanner(){
+        String valor = "";
+        int i;
+        i = 0;
+        System.out.print("Respuesta: ");
+        Scanner scanner = new Scanner(System.in);
+        valor = scanner.next();
+        while(i < valor.length() && Character.isDigit(valor.charAt(i))) i++;
+        if (i < valor.length()) valor ="-1";
+        return Integer.parseInt(valor);
+    }
     private void tituloMenu(String cadena){
         System.out.println("----------------------------------------------------");
         System.out.println(application.TITULO + " : " + cadena);
@@ -250,9 +262,9 @@ public class ClientConsole implements UIHelper {
         switch (valor){
             case 1 -> menuClienteFlujo();
             case 2 -> menuVerProductoFlujo();
-            case 3 -> menuVerCarritoFlujo();
+            case 3 -> menuPrincipalFlujo();
             case 4 -> menuModificarProductoCarritoFlujo();
-            case 5 -> JOptionPane.showMessageDialog(null, "Error al conectar al servidor, intente de nuevo");
+            case 5 -> menuCompraFlujo();
             default -> {}
         }
     }
@@ -286,8 +298,6 @@ public class ClientConsole implements UIHelper {
         }while (!aux && id != 0 );
 
         return id;
-
-
     }
     @Override
     public int getCantidad(int id, String valor) {
@@ -323,5 +333,24 @@ public class ClientConsole implements UIHelper {
                 System.out.println("----------------------------------------------------");
             }
         }
+    }
+    @Override
+    public String getNombre() {
+        return null;
+    }
+
+    @Override
+    public String getDescipcion() {
+        return null;
+    }
+
+    @Override
+    public float getPrecio() {
+        return 0;
+    }
+
+    @Override
+    public int getStock() {
+        return 0;
     }
 }
