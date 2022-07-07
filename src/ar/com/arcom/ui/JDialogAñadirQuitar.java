@@ -1,7 +1,5 @@
 package ar.com.arcom.ui;
 
-import ar.com.arcom.handlers.EventoBoton;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;

@@ -2,15 +2,15 @@ package ar.com.arcom.bin;
 
 public class Producto {
     // Atributos
-    private int idProducto;
+    private int id;
     private String nombre;
     private String descripcion;
     private float precio;
     private int stock;
 
     // Contructor
-    public Producto(int idProducto, String nombre, String descripcion, float precio, int stock) {
-        this.idProducto = idProducto;
+    public Producto(int id, String nombre, String descripcion, float precio, int stock) {
+        this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
@@ -18,12 +18,12 @@ public class Producto {
     }
 
     // Métodos
-    public int getIdProducto() {
-        return idProducto;
+    public int getId() {
+        return id;
     }
 
-    public void setIdProducto(int idProducto) {
-        this.idProducto = idProducto;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNombre() {

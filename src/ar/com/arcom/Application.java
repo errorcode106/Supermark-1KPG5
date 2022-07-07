@@ -11,10 +11,6 @@ public class Application {
     private Usuario usuario;
     private InterfaceConsole consoleInterface;
 
-    public Application(){
-
-    }
-
     public void play(){
         int seleccion = JOptionPane.showOptionDialog( null,"¿Qué versión de SuperMark desea?",
                 TITULO,JOptionPane.YES_NO_CANCEL_OPTION,

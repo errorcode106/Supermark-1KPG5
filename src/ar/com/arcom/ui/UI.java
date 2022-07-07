@@ -1,15 +1,22 @@
 package ar.com.arcom.ui;
 
 import ar.com.arcom.Application;
-import ar.com.arcom.handlers.EventoBoton;
+import ar.com.arcom.bin.Articulo;
+import ar.com.arcom.bin.Cliente;
+import ar.com.arcom.bin.Producto;
+import ar.com.arcom.handlers.EndUp;
 import ar.com.arcom.handlers.UIHelper;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class UI extends JFrame implements UIHelper {
+public class UI extends JFrame implements UIHelper, EndUp {
     public final int CLIENTE_UI = 0, ADMINISTRADOR_UI = 10;
     public final int CLIENTE_VER_CARRITOS = 1, CLIENTE_VER_PRODUCTOS = 2, CLIENTE_MODIFICAR_CARRITO = 3;
     public final int ADMINISTRADOR_1 = 11, ADMINISTRADOR_2 = 12, ADMINISTRADOR_3 = 13;
@@ -20,12 +27,12 @@ public class UI extends JFrame implements UIHelper {
     private JPanel contentPane, panel_table,panel_total;
     private JTable table;
 
+    private int id;
+
     private JTextPane txt_info;
     private JLabel lbl_icon,lbl_logo,lbl_total,lbl_total_precio;
     private JButton btn_secundary_1, btn_secundary_2, btn_secundary_3, btn_primary;
     private JScrollPane scrollPane;
-
-    private boolean refresh;
 
     public UI (Application application) throws HeadlessException {
         super();
@@ -45,10 +52,10 @@ public class UI extends JFrame implements UIHelper {
         setResizable(false);
         setLocationRelativeTo(null);
         setSize(500, 600);
-        refresh = false;
         Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(pantalla.width/2-(getWidth()/2), pantalla.height/2-(getHeight()/2));
 
+        id = 0;
         // Se cargan y se inicializan los componentes de la ventana principal y otros.
         initialize();
     }
@@ -68,8 +75,8 @@ public class UI extends JFrame implements UIHelper {
         // inicializa la tabla de datos
         panel_table = new JPanel();
         panel_table.setLayout(new BorderLayout(0, 0));
-        // inicio de info bar
 
+        // inicio de info bar
         txt_info = new JTextPane();
         txt_info.setText("Usuario: " + application.getUsuario().getNombre().toUpperCase().charAt(0) + application.getUsuario().getNombre().substring(1));
         txt_info.setForeground(Color.WHITE);
@@ -179,8 +186,10 @@ public class UI extends JFrame implements UIHelper {
         if (txt_info != null) update();
     }
 
-    // Métodos asociados al cliente
-    private void createClientInterface(){
+    // ----------------------------------------------------------------
+    // Métodos de opciones
+    // ----------------------------------------------------------------
+    private void menuPrincipalCliente(){
         int i = 0;
         while (i < panel_table.getComponents().length && panel_table.getComponents()[i].getClass() != JScrollPane.class) i++;
         if (i<panel_table.getComponents().length) panel_table.remove(scrollPane);
@@ -207,7 +216,13 @@ public class UI extends JFrame implements UIHelper {
 
         getContentPane().repaint();
     }
-    private void createClientInterfaceVerCarrito(){
+    private void menuVerCarritoCliente(){
+        int i = 0;
+        while (i < panel_table.getComponents().length && panel_table.getComponents()[i].getClass() != JScrollPane.class) i++;
+        if (i<panel_table.getComponents().length) panel_table.remove(scrollPane);
+        if (panel_total != null) panel_table.remove(panel_total);
+        panel_table.updateUI();
+
         // inicializa la tabla de datos
         lbl_logo.setIcon(null);
         scrollPane = new JScrollPane();
@@ -223,53 +238,31 @@ public class UI extends JFrame implements UIHelper {
         table.setForeground(new Color(0, 0, 0));
         table.setBackground(new Color(255, 255, 255));
         table.setModel(new DefaultTableModel(
-                new Object[][] {
-                        {"Peras", "15", "1", "15"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"},
-                        {"Manzanas", "20", "5", "100"}
-                },
-                new String[] {
-                        "Nombre producto", "Precio", "Cantidad", "Sub Total"
+                createListArtículos(((Cliente)(application.getUsuario())).getCarrito().getArticulos()),
+                new String[]{
+                        "ID",
+                        "Producto",
+                        "Descripcion",
+                        "Precio",
+                        "Cantidad",
+                        "Sub Total"
                 }
         ));
 
-        table.getColumnModel().getColumn(0).setPreferredWidth(300);
-        table.getColumnModel().getColumn(1).setPreferredWidth(100);
+        table.getColumnModel().getColumn(0).setPreferredWidth(40);
+        table.getColumnModel().getColumn(1).setPreferredWidth(150);
         table.getColumnModel().getColumn(2).setPreferredWidth(100);
-        table.getColumnModel().getColumn(3).setPreferredWidth(150);
+        table.getColumnModel().getColumn(3).setPreferredWidth(100);
+        table.getColumnModel().getColumn(4).setPreferredWidth(100);
+        table.getColumnModel().getColumn(5).setPreferredWidth(100);
+
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                id = Integer.parseInt((String)table.getValueAt(table.getSelectedRow(),0));
+            }
+
+        });
 
         scrollPane.setViewportView(table);
         getContentPane().add(panel_table, BorderLayout.CENTER);
@@ -285,7 +278,7 @@ public class UI extends JFrame implements UIHelper {
         lbl_total.setFont(new Font("Dialog", Font.BOLD, 30));
         panel_total.add(lbl_total);
 
-        lbl_total_precio = new JLabel("$115,00 ");
+        lbl_total_precio = new JLabel(((Cliente)(application.getUsuario())).getCarrito().getTotales() + " ");
         lbl_total_precio.setHorizontalAlignment(SwingConstants.RIGHT);
         lbl_total_precio.setFont(new Font("Dialog", Font.BOLD, 30));
         panel_total.add(lbl_total_precio);
@@ -299,47 +292,178 @@ public class UI extends JFrame implements UIHelper {
         btn_secundary_2.setActionCommand("cmd_edit");
 
         btn_secundary_3.setText("Agregar");
-        btn_secundary_3.setActionCommand("cmd_add");
+        btn_secundary_3.setActionCommand("cmd_products");
 
         btn_primary.setText("Comprar");
         btn_primary.setActionCommand("cmd_buy");
 
         getContentPane().repaint();
     }
-    private void createClientInterfaceVerProductos(){
-        // inicializa la tabla de datos
+    private void menuVerProductosCliente(){
+        int i = 0;
+        while (i < panel_table.getComponents().length && panel_table.getComponents()[i].getClass() != JScrollPane.class) i++;
+        if (i<panel_table.getComponents().length) panel_table.remove(scrollPane);
+        if (panel_total != null) panel_table.remove(panel_total);
+        panel_table.updateUI();
 
-        // Inicializa los botones primarios y secundarios
+        lbl_logo.setIcon(null);
+        scrollPane = new JScrollPane();
+        scrollPane.setBorder(null);
+        scrollPane.setBackground(new Color(255, 255, 255));
+        scrollPane.setOpaque(false);
+        table = new JTable();
+        table.setAutoCreateRowSorter(true);
+        table.setBorder(null);
+        table.setOpaque(false);
+        table.getTableHeader().setOpaque(false);
+        table.setGridColor(new Color(192, 192, 192));
+        table.setForeground(new Color(0, 0, 0));
+        table.setBackground(new Color(255, 255, 255));
+        table.setModel(new DefaultTableModel(
+                createListProductos(eventoBoton.getActionHandler().obtenerProductos(true)),
+                new String[]{
+                        "ID",
+                        "Producto",
+                        "Descripcion",
+                        "Precio",
+                        "Existencias"
+                }
+        ));
+
+        table.getColumnModel().getColumn(0).setPreferredWidth(40);
+        table.getColumnModel().getColumn(1).setPreferredWidth(150);
+        table.getColumnModel().getColumn(2).setPreferredWidth(100);
+        table.getColumnModel().getColumn(3).setPreferredWidth(100);
+        table.getColumnModel().getColumn(3).setPreferredWidth(100);
+
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                id = Integer.parseInt((String)table.getValueAt(table.getSelectedRow(),0));
+            }
+
+        });
+
+        scrollPane.setViewportView(table);
+        getContentPane().add(panel_table, BorderLayout.CENTER);
+        panel_table.add(scrollPane, BorderLayout.CENTER);
+
         btn_secundary_1.setText("Volver");
         btn_secundary_1.setActionCommand("cmd_inicio_cliente");
 
-        btn_secundary_2.setText("Modificar");
-        btn_secundary_2.setEnabled(true);
+        btn_secundary_2.setText("");
+        btn_secundary_2.setEnabled(false);
         btn_secundary_2.setActionCommand("cmd_edit");
 
         btn_secundary_3.setText("Agregar");
         btn_secundary_3.setActionCommand("cmd_add");
 
-        btn_primary.setText("Comprar");
-        btn_primary.setActionCommand("cmd_buy");
+        btn_primary.setText("Ver carrito");
+        btn_primary.setActionCommand("cmd_to_shopping_cart");
 
         getContentPane().repaint();
     }
+
+    private void menuModificarProductoDelCarrito(){
+        int i = 0;
+        while (i < panel_table.getComponents().length && panel_table.getComponents()[i].getClass() != JScrollPane.class) i++;
+        if (i<panel_table.getComponents().length) panel_table.remove(scrollPane);
+        if (panel_total != null) panel_table.remove(panel_total);
+        panel_table.updateUI();
+
+        btn_secundary_1.setText("Volver");
+        btn_secundary_1.setActionCommand("cmd_inicio_cliente");
+
+        btn_secundary_2.setText("");
+        btn_secundary_2.setEnabled(false);
+        btn_secundary_2.setActionCommand("cmd_edit");
+
+        btn_secundary_3.setText("Agregar");
+        btn_secundary_3.setActionCommand("cmd_add");
+
+        btn_primary.setText("Ver carrito");
+        btn_primary.setActionCommand("cmd_to_shopping_cart");
+
+        getContentPane().repaint();
+    }
+    private void menuCompra(){
+        int i = 0;
+        while (i < panel_table.getComponents().length && panel_table.getComponents()[i].getClass() != JScrollPane.class) i++;
+        if (i<panel_table.getComponents().length) panel_table.remove(scrollPane);
+        if (panel_total != null) panel_table.remove(panel_total);
+        panel_table.updateUI();
+
+        btn_secundary_1.setText("Volver");
+        btn_secundary_1.setActionCommand("cmd_inicio_cliente");
+
+        btn_secundary_2.setText("");
+        btn_secundary_2.setEnabled(false);
+        btn_secundary_2.setActionCommand("cmd_edit");
+
+        btn_secundary_3.setText("Agregar");
+        btn_secundary_3.setActionCommand("cmd_add");
+
+        btn_primary.setText("Ver carrito");
+        btn_primary.setActionCommand("cmd_to_shopping_cart");
+
+        getContentPane().repaint();
+    }
+
+    private Object[][] createListProductos(List<List<String>> productos) {
+
+        Object[][] objects = new Object[productos.size()][6];
+
+        for(int i = 0; i < objects.length; i++){
+            objects[i] = new Object[]{
+                    productos.get(i).get(0),
+                    productos.get(i).get(1),
+                    productos.get(i).get(2),
+                    productos.get(i).get(3),
+                    productos.get(i).get(4)
+            };
+        }
+        return objects;
+    }
+    private Object[][] createListArtículos( List<Articulo> articulos){
+        Object[][] objects = new Object[articulos.size()][6];
+
+        for(int i = 0; i < objects.length; i++){
+            objects[i] = new Object[]{
+                    articulos.get(i).getId(),
+                    articulos.get(i).getNombre(),
+                    articulos.get(i).getDescripcion(),
+                    articulos.get(i).getPrecio(),
+                    articulos.get(i).getCantidad(),
+                    articulos.get(i).getTotal()
+            };
+        }
+        return objects;
+    }
+
     // Métodos asociados al administrador
     private void createAdminInterface() {
 
     }
 
-    //------------------------------------------------------------------
-    // Implementacion ClienteAdministradorUI
+    // ----------------------------------------------------------------
+    // Métodos generales
+    // ----------------------------------------------------------------
+    private void tablaFix(String[] etiquetas, List<List<String>> lista, boolean necesitaTotal){}
+    private void cargaLista(int valor){}
+    // ----------------------------------------------------------------
+    // Métodos generales
+    // ----------------------------------------------------------------
+
+    // ----------------------------------------------------------------
+    // Métodos de implementacion
+    // ----------------------------------------------------------------
     @Override
     public void configuraUI(int valor) {
         switch(valor){
-            case CLIENTE_UI -> {createClientInterface();}
-            case CLIENTE_VER_CARRITOS -> {
-                createClientInterfaceVerCarrito();}
+            case CLIENTE_UI -> menuPrincipalCliente();
+            case CLIENTE_VER_CARRITOS -> menuVerCarritoCliente();
             case CLIENTE_MODIFICAR_CARRITO -> {}
-            case CLIENTE_VER_PRODUCTOS -> {}
+            case CLIENTE_VER_PRODUCTOS -> menuVerProductosCliente();
             case ADMINISTRADOR_UI -> {createAdminInterface();}
             case 11 -> {}
             case 12 -> {}
@@ -347,39 +471,37 @@ public class UI extends JFrame implements UIHelper {
             default -> {}
         }
     }
-
     @Override
     public int getID(String valor, boolean aDeBaseDatos) {
-        return 0;
+        return id;
     }
-
     @Override
     public int getCantidad(int id, String valor) {
-        return 0;
+        return Integer.parseInt(JOptionPane.showInputDialog("Ingrese la cantidad: "));
     }
-
     @Override
     public void error(int valor) {
 
     }
-
     @Override
     public String getNombre() {
         return null;
     }
-
     @Override
     public String getDescipcion() {
         return null;
     }
-
     @Override
     public float getPrecio() {
         return 0;
     }
-
     @Override
     public int getStock() {
         return 0;
+    }
+    @Override
+    public void endUp(int valor) {
+        setVisible(false);
+        loginScreen();
     }
 }

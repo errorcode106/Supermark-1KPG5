@@ -56,9 +56,9 @@ public class InterfaceConsole implements Login {
     }
     private int scanner(){
         String valor = "";
-        int i;
-        i = 0;
-        System.out.print("Respuesta: ");
+       int i;
+       i = 0;
+       System.out.print("Respuesta: ");
         Scanner scanner = new Scanner(System.in);
         valor = scanner.next();
         while(i < valor.length() && Character.isDigit(valor.charAt(i))) i++;

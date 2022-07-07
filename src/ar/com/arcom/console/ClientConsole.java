@@ -3,6 +3,7 @@ package ar.com.arcom.console;
 import ar.com.arcom.Application;
 import ar.com.arcom.bin.Cliente;
 import ar.com.arcom.handlers.ActionHandler;
+import ar.com.arcom.handlers.EndUp;
 import ar.com.arcom.handlers.UIHelper;
 
 import javax.swing.*;
@@ -10,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-public class ClientConsole implements UIHelper {
+public class ClientConsole implements UIHelper, EndUp {
     public final static int LISTA_PRODUCTOS = 0, LISTA_CARRITO_CLIENTE = 1;
     // ----------------------------------------------------------------
     // Atributos
@@ -35,7 +36,7 @@ public class ClientConsole implements UIHelper {
         do {
             respuesta = menuPrincipalCliente();
             switch (respuesta){
-                case 0 -> actionHandler.cerrarSesion();
+                case 0 -> actionHandler.cerrarSesion(this);
                 case 1 -> actionHandler.configuraUI(this,2);
                 case 2 -> actionHandler.configuraUI(this,3);
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
@@ -48,13 +49,14 @@ public class ClientConsole implements UIHelper {
             respuesta = menuVerProductos();
             switch (respuesta){
                 case 1 -> actionHandler.agregaAlCarrito(this);
-                case 2 -> actionHandler.configuraUI(this,3);
-                case 3 -> {}
+                case 2 -> JOptionPane.showMessageDialog(null,
+                        (actionHandler.buscarProductoNombre(this)!=0) ? "El producto tiene indice: " + actionHandler.buscarProductoNombre(this) : "Producto no encontrado!");
+                case 3 -> actionHandler.configuraUI(this,3);
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);
     }
-    public void menuPrincipalFlujo(){
+    public void menuVerCarritoFlujo(){
         int respuesta;
         do {
             respuesta = menuVerCarrito();
@@ -108,8 +110,8 @@ public class ClientConsole implements UIHelper {
         cargaLista(LISTA_PRODUCTOS);
         System.out.println("Ingrese [valor] correspondiente a la opcion elegida.");
         System.out.println("[1] Agregar al carrito.");
-        //System.out.println("[2] Buscar Producto.");
-        System.out.println("[2] Ver Carrito.");
+        System.out.println("[2] Buscar Producto.");
+        System.out.println("[3] Ver Carrito.");
         System.out.println("");
         System.out.println("[0] Volver.");
         System.out.println("----------------------------------------------------");
@@ -262,7 +264,7 @@ public class ClientConsole implements UIHelper {
         switch (valor){
             case 1 -> menuClienteFlujo();
             case 2 -> menuVerProductoFlujo();
-            case 3 -> menuPrincipalFlujo();
+            case 3 -> menuVerCarritoFlujo();
             case 4 -> menuModificarProductoCarritoFlujo();
             case 5 -> menuCompraFlujo();
             default -> {}
@@ -336,7 +338,13 @@ public class ClientConsole implements UIHelper {
     }
     @Override
     public String getNombre() {
-        return null;
+        String nombre;
+        System.out.println("----------------------------------------------------");
+        System.out.println("Ingrese el nombre del producto.");
+
+        Scanner scanner = new Scanner(System.in);
+        nombre = scanner.nextLine();
+        return nombre;
     }
 
     @Override
@@ -352,5 +360,9 @@ public class ClientConsole implements UIHelper {
     @Override
     public int getStock() {
         return 0;
+    }
+
+    @Override
+    public void endUp(int valor) {
     }
 }

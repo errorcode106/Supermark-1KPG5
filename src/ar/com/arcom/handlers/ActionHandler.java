@@ -3,6 +3,7 @@ package ar.com.arcom.handlers;
 import ar.com.arcom.Application;
 import ar.com.arcom.bin.*;
 import ar.com.arcom.console.AdminConsole;
+import ar.com.arcom.console.ClientConsole;
 import ar.com.arcom.mysql.MySQLHelper;
 
 import javax.swing.*;
@@ -72,12 +73,13 @@ public class ActionHandler {
         } else valor =  3;
         login.endUp(valor);
     }
-    public void cerrarSesion(){
+    public void cerrarSesion(EndUp endUp){
+        System.out.println(application.getUsuario().getType());
         if (application.getUsuario().getType() == 0)
             for (Articulo articulo : ((Cliente)application.getUsuario()).getCarrito().getArticulos())
                 mySQLHelper.agregarStock(articulo.getId(),articulo.getCantidad());
         application.setUsuario(null);
-
+        endUp.endUp(0);
         System.gc();
     }
 
@@ -133,7 +135,6 @@ public class ActionHandler {
 
     public void comprar() {
         // comparar si esta bien la lista de articulos con la lista de pedidos de la base de datos
-
     }
     public void vaciarCarrito() {
         for(Articulo articulo : ((Cliente)(application.getUsuario())).getCarrito().getArticulos())
@@ -181,5 +182,9 @@ public class ActionHandler {
     }
     public void configuraUI(UIHelper uiHelper, int valor) {
         uiHelper.configuraUI(valor);
+    }
+    public int buscarProductoNombre(UIHelper uiHelper) {
+        String nombre = uiHelper.getNombre();
+        return mySQLHelper.buscaPorNombre(nombre);
     }
 }

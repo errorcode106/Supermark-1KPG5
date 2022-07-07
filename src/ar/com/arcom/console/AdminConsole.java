@@ -3,6 +3,7 @@ package ar.com.arcom.console;
 import ar.com.arcom.Application;
 import ar.com.arcom.bin.Cliente;
 import ar.com.arcom.handlers.ActionHandler;
+import ar.com.arcom.handlers.EndUp;
 import ar.com.arcom.handlers.UIHelper;
 
 import javax.swing.*;
@@ -10,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-public class AdminConsole implements UIHelper {
+public class AdminConsole implements UIHelper, EndUp {
     // ----------------------------------------------------------------
     // Atributos
     // ----------------------------------------------------------------
@@ -35,7 +36,7 @@ public class AdminConsole implements UIHelper {
         do {
             respuesta = menuPrincipal();
             switch (respuesta){
-                case 0 -> actionHandler.cerrarSesion();
+                case 0 -> actionHandler.cerrarSesion(this);
                 case 1 -> actionHandler.configuraUI(this,2);
                 case 2 -> actionHandler.configuraUI(this,3);
                 case 3 -> {}
@@ -49,7 +50,7 @@ public class AdminConsole implements UIHelper {
         do {
             respuesta = menuVerProductos();
             switch (respuesta){
-                case 1 -> actionHandler.modificarProducto(this);
+                case 1 -> actionHandler.configuraUI(this,3);
                 case 2 -> actionHandler.cargarProducto(this);
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
@@ -230,7 +231,6 @@ public class AdminConsole implements UIHelper {
     public void error(int valor) {
 
     }
-
     @Override
     public String getNombre() {
         String nombre;
@@ -241,7 +241,6 @@ public class AdminConsole implements UIHelper {
         nombre = scanner.nextLine();
         return nombre;
     }
-
     @Override
     public String getDescipcion() {
         String descripcion;
@@ -252,7 +251,6 @@ public class AdminConsole implements UIHelper {
         descripcion = scanner.nextLine();
         return descripcion;
     }
-
     @Override
     public float getPrecio() {
         float precio;
@@ -263,7 +261,6 @@ public class AdminConsole implements UIHelper {
         precio = scanner.nextFloat();
         return precio;
     }
-
     @Override
     public int getStock() {
         int stock;
@@ -273,5 +270,10 @@ public class AdminConsole implements UIHelper {
         Scanner scanner = new Scanner(System.in);
         stock = scanner.nextInt();
         return stock;
+    }
+
+    @Override
+    public void endUp(int valor) {
+
     }
 }

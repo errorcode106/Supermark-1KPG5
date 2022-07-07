@@ -403,7 +403,7 @@ public class MySQLHelper {
             try {
                 statement = connection.createStatement();
                 String sql;
-                sql = "SELECT * FROM supermark.products_db where nombre regexp '" + nombre + "'";
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db where nombre regexp '" + nombre + "'";
                 resultSet = statement.executeQuery(sql);
                 if (resultSet.next()) aux = resultSet.getInt("id");
             } catch (SQLException e) {

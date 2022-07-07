@@ -1,6 +1,5 @@
 package ar.com.arcom.ui;
 
-import ar.com.arcom.handlers.EventoBoton;
 import ar.com.arcom.handlers.Login;
 
 import javax.swing.*;
