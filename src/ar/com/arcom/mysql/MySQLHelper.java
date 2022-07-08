@@ -6,10 +6,7 @@ import ar.com.arcom.bin.Producto;
 import javax.swing.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 /*
 Pasos para usar JDBC:
@@ -523,5 +520,97 @@ public class MySQLHelper {
         int i = 0;
         while (i < aux.size() && aux.get(i)) i++;
         return i >= aux.size();
+    }
+
+    public List<List<String>> obtenerUsuarios(boolean soloConPedidos) {
+        List<List<String>> aux = new ArrayList<>();
+        List<List<String>> listaFinal = new ArrayList<>();
+        if (soloConPedidos){
+            openConection();
+            if (openConnection){
+                try {
+                    statement = connection.createStatement();
+                    String sql;
+                    sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.shopping_cart_db";
+                    resultSet = statement.executeQuery(sql);
+                    if(resultSet.next()) {
+                        List<String> labels = List.of("client_id");
+                        aux = extractData(labels);
+                    }
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(null, e.getMessage());
+                }
+
+                try {
+                    for (List<String> strings : aux) {
+                        statement = connection.createStatement();
+                        String sql;
+                        sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.users_db WHERE id = " + strings.get(0);
+                        resultSet = statement.executeQuery(sql);
+                        if(resultSet.next()) {
+                            List<String> labels = List.of("id","user");
+                            listaFinal.addAll(extractDataUsers(labels));
+                        }
+                    }
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(null, e.getMessage());
+                }
+            }
+
+        } else {
+            openConection();
+            if (openConnection){
+                try {
+                    statement = connection.createStatement();
+                    String sql;
+                    sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.users_db";
+                    resultSet = statement.executeQuery(sql);
+                    if(resultSet.next()) {
+                        List<String> labels = Arrays.asList("id","user");
+                        aux = extractDataUsers(labels);
+                    }
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(null, e.getMessage());
+                }
+            }
+        }
+
+        clean();
+        return listaFinal;
+    }
+
+    private List<List<String>> extractDataUsers(List<String> labels) {
+        //PASO 3: Extraer datos de un ResulSet
+        List<List<String>> valor = new ArrayList<>();
+        try {
+            do{
+                List<String> aux = new ArrayList<>();
+                for (String label : labels) aux.add(resultSet.getString(label));
+                valor.add(aux);
+            }while (resultSet.next());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        return valor;
+    }
+
+    private List<List<String>> extractData(List<String> labels) {
+        //PASO 3: Extraer datos de un ResulSet
+        List<List<String>> valor = new ArrayList<>();
+        try {
+            do{
+                List<String> aux = new ArrayList<>();
+                for (String label : labels) aux.add(resultSet.getString(label));
+
+                int indice = 0;
+                while (indice < valor.size() && !valor.get(indice).get(0).equals(aux.get(0))) indice++;
+                if (indice >= valor.size()) valor.add(aux);
+            }while (resultSet.next());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        return valor;
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
 public class UI extends JFrame implements UIHelper, EndUp {
     public final int CLIENTE_UI = 1, ADMINISTRADOR_UI = 6;
     public final int CLIENTE_VER_CARRITOS = 3, CLIENTE_VER_PRODUCTOS = 2, CLIENTE_MODIFICAR_CARRITO = 4, CLIENTE_COMPRAR = 5;
-    public final int ADMINISTRADOR_VER_PRODUCTOS = 11, ADMINISTRADOR_MODIFICAR_PRODUCTO = 12, ADMINISTRADOR_VER_USUARIOS = 13;
+    public final int ADMINISTRADOR_VER_PRODUCTOS = 7, ADMINISTRADOR_MODIFICAR_PRODUCTO = 8, ADMINISTRADOR_VER_USUARIOS = 9;
 
     private Application application;
     private EventoBoton eventoBoton;
@@ -506,7 +506,7 @@ public class UI extends JFrame implements UIHelper, EndUp {
         btn_secundary_2.setActionCommand("cmd_edit");
 
         btn_secundary_3.setText("Modificar");
-        btn_secundary_3.setActionCommand("cmd_edit");
+        btn_secundary_3.setActionCommand("cmd_edit_administrador");
 
         btn_primary.setText("Agregar nuevo producto");
         btn_primary.setActionCommand("cmd_add_new_product");
@@ -534,7 +534,7 @@ public class UI extends JFrame implements UIHelper, EndUp {
         table.setForeground(new Color(0, 0, 0));
         table.setBackground(new Color(255, 255, 255));
         table.setModel(new DefaultTableModel(
-                createListProductos(eventoBoton.getActionHandler().obtenerProductos(true)),
+                createListUsuarios(eventoBoton.getActionHandler().obtenerUsuarios(true)),
                 new String[]{
                         "ID",
                         "Usuario",
@@ -550,8 +550,6 @@ public class UI extends JFrame implements UIHelper, EndUp {
         table.getColumnModel().getColumn(0).setPreferredWidth(40);
         table.getColumnModel().getColumn(1).setPreferredWidth(150);
         table.getColumnModel().getColumn(2).setPreferredWidth(100);
-        table.getColumnModel().getColumn(3).setPreferredWidth(100);
-        table.getColumnModel().getColumn(3).setPreferredWidth(100);
         table.setRowSelectionAllowed(true);
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -581,6 +579,21 @@ public class UI extends JFrame implements UIHelper, EndUp {
 
         getContentPane().repaint();
     }
+
+
+    private Object[][] createListUsuarios(List<List<String>> usuarios) {
+
+        Object[][] objects = new Object[usuarios.size()][3];
+
+        for(int i = 0; i < objects.length; i++){
+            objects[i] = new Object[]{
+                    Integer.parseInt(usuarios.get(i).get(0)),
+                    usuarios.get(i).get(1),
+                    true,
+            };
+        }
+        return objects;
+    }
     // ----------------------------------------------------------------
     // Métodos generales
     // ----------------------------------------------------------------
@@ -598,7 +611,7 @@ public class UI extends JFrame implements UIHelper, EndUp {
             case CLIENTE_COMPRAR -> {}
             case ADMINISTRADOR_UI -> createAdminInterface();
             case ADMINISTRADOR_VER_PRODUCTOS -> menuVerProductosAdministrador();
-            //case ADMINISTRADOR_MODIFICAR_PRODUCTO -> menuVerProductosAdministrador();
+            case ADMINISTRADOR_MODIFICAR_PRODUCTO -> menuVerProductosAdministrador();
             case ADMINISTRADOR_VER_USUARIOS -> menuVerUsuarios();
             default -> {}
         }

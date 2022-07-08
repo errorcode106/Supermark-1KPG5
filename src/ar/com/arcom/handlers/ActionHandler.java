@@ -139,6 +139,7 @@ public class ActionHandler {
         ((Cliente)(application.getUsuario())).getCarrito().setArticulos(new ArrayList<>());
         System.gc();
         uiHelper.configuraUI(3);
+        JOptionPane.showMessageDialog(null, "La compra se a realizado con exito");
     }
     public void vaciarCarrito() {
         for(Articulo articulo : ((Cliente)(application.getUsuario())).getCarrito().getArticulos())
@@ -183,6 +184,9 @@ public class ActionHandler {
                     uiHelper.getPrecio(),
                     uiHelper.getStock()
             ));
+    }
+    public List<List<String>> obtenerUsuarios(boolean soloConPedidos) {
+        return mySQLHelper.obtenerUsuarios(soloConPedidos);
     }
     // ----------------------------------------------------------------
     // Métodos generales
