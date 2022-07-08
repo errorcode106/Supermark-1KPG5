@@ -61,13 +61,8 @@ public class UI extends JFrame implements UIHelper, EndUp {
     private void initialize(){
         loginScreen();
         init();
-
-        if (application.getUsuario().getType() == 1) {
-            configuraUI(ADMINISTRADOR_UI);
-        }
-        else {
-            configuraUI(CLIENTE_UI);
-        }
+        if (application.getUsuario().getType() == 0) configuraUI(1);
+        else configuraUI(6);
     }
     private void init(){
         setTitle(application.TITULO);
@@ -170,7 +165,10 @@ public class UI extends JFrame implements UIHelper, EndUp {
         btn_primary.setBackground(new Color(66, 183, 42));
     }
     private void update(){
-        txt_info.setText("Usuario: " + application.getUsuario().getNombre().toUpperCase().charAt(0) + application.getUsuario().getNombre().substring(1));
+        txt_info.setText("Usuario: " +
+                application.getUsuario().getNombre().toUpperCase().charAt(0) +
+                application.getUsuario().getNombre().substring(1)
+        );
     }
     public Application getApplication() {
         return application;
@@ -416,7 +414,7 @@ public class UI extends JFrame implements UIHelper, EndUp {
     }
 
     // Métodos asociados al administrador
-    private void createAdminInterface() {
+    private void menuPrincipalAdministrador() {
         int i = 0;
         while (i < panel_table.getComponents().length && panel_table.getComponents()[i].getClass() != JScrollPane.class) i++;
         if (i<panel_table.getComponents().length) panel_table.remove(scrollPane);
@@ -609,7 +607,7 @@ public class UI extends JFrame implements UIHelper, EndUp {
             case CLIENTE_VER_CARRITOS -> menuVerCarritoCliente();
             case CLIENTE_MODIFICAR_CARRITO -> agregarQuitar();
             case CLIENTE_COMPRAR -> {}
-            case ADMINISTRADOR_UI -> createAdminInterface();
+            case ADMINISTRADOR_UI -> menuPrincipalAdministrador();
             case ADMINISTRADOR_VER_PRODUCTOS -> menuVerProductosAdministrador();
             case ADMINISTRADOR_MODIFICAR_PRODUCTO -> menuVerProductosAdministrador();
             case ADMINISTRADOR_VER_USUARIOS -> menuVerUsuarios();
@@ -623,10 +621,13 @@ public class UI extends JFrame implements UIHelper, EndUp {
     @Override
     public int getCantidad(int id, String valor) {
         String respuesta = JOptionPane.showInputDialog("Ingrese la cantidad.");
-        int i = 0;
-        while(i < respuesta.length() && Character.isDigit(respuesta.charAt(i))) i++;
-        if (i < respuesta.length()) respuesta ="0";
-        return Integer.parseInt(respuesta);
+        if (respuesta != null) {
+            int i = 0;
+            while(i < respuesta.length() && Character.isDigit(respuesta.charAt(i))) i++;
+            if (i < respuesta.length()) respuesta ="0";
+            return Integer.parseInt(respuesta);
+        } else return 0;
+
     }
     @Override
     public void error(int valor) {
@@ -650,7 +651,26 @@ public class UI extends JFrame implements UIHelper, EndUp {
     }
     @Override
     public void endUp(int valor) {
-        setVisible(false);
-        loginScreen();
+        switch (valor){
+            case 0 -> {
+                setVisible(false);
+                loginScreen();
+                if (application.getUsuario().getType() == 0) configuraUI(1);
+                else configuraUI(6);
+            }
+            case 1 -> {
+                configuraUI(CLIENTE_UI);
+            }
+            case 2 -> {
+                configuraUI(ADMINISTRADOR_UI);
+            }
+            case 3 -> {
+
+            }
+            case 4 -> {
+
+            }
+            default -> {}
+        }
     }
 }

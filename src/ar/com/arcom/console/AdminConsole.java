@@ -64,6 +64,7 @@ public class AdminConsole implements UIHelper, EndUp {
             switch (respuesta){
                 case 1 -> actionHandler.modificarProducto(this,true);
                 case 2 -> actionHandler.cargarProducto(this);
+
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);

@@ -9,6 +9,10 @@ public abstract class Usuario {
         this.type = type;
     }
 
+    public void setType(int type) {
+        this.type = type;
+    }
+
     public String getNombre() {
         return usuario;
     }

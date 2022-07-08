@@ -44,9 +44,11 @@ public class ActionHandler {
                 isLogin = true;
                 if (mySQLHelper.getType(user) == 0) {
                     application.setUsuario(new Cliente(user));
+                    application.getUsuario().setType(0);
                     valor =  1;
                 } else {
                     application.setUsuario(new Administrador(user));
+                    application.getUsuario().setType(1);
                     valor =  2;
                 }
             } else valor =  0;
@@ -90,8 +92,8 @@ public class ActionHandler {
         int id = uiHelper.getID("agregar",true);
 
         if(id != 0 && mySQLHelper.consultaStock(id,1)){
-            int cantidad = uiHelper.getCantidad(id, "agregar");
-            if (cantidad != 0) {
+            Integer cantidad = uiHelper.getCantidad(id, "agregar");
+            if (cantidad != null && cantidad != 0) {
                 if(mySQLHelper.consultaStock(id, cantidad)){
                     if (((Cliente)(application.getUsuario())).getCarrito().consultaSiExisteID(id)){
                         mySQLHelper.quitaStock(id, cantidad);
@@ -135,11 +137,13 @@ public class ActionHandler {
 
     public void comprar(UIHelper uiHelper) {
         List<Articulo> lista = ((Cliente)application.getUsuario()).getCarrito().getArticulos();
-        if(!mySQLHelper.comprarListaArticulos(application.getUsuario().getNombre(),lista)) uiHelper.error(2);
-        ((Cliente)(application.getUsuario())).getCarrito().setArticulos(new ArrayList<>());
-        System.gc();
-        uiHelper.configuraUI(3);
-        JOptionPane.showMessageDialog(null, "La compra se a realizado con exito");
+        if (lista.size()>0){
+            if(!mySQLHelper.comprarListaArticulos(application.getUsuario().getNombre(),lista)) uiHelper.error(2);
+            ((Cliente)(application.getUsuario())).getCarrito().setArticulos(new ArrayList<>());
+            System.gc();
+            uiHelper.configuraUI(3);
+            JOptionPane.showMessageDialog(null, "La compra se a realizado con exito");
+        }
     }
     public void vaciarCarrito() {
         for(Articulo articulo : ((Cliente)(application.getUsuario())).getCarrito().getArticulos())

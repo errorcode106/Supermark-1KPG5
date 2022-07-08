@@ -10,6 +10,7 @@ public class Application {
     public final String TITULO = "SuperMark v0.20220705";
     private Usuario usuario;
     private InterfaceConsole consoleInterface;
+    private UI ui;
 
     public void play(){
         int seleccion = JOptionPane.showOptionDialog( null,"¿Qué versión de SuperMark desea?",
@@ -22,7 +23,7 @@ public class Application {
                 consoleInterface.play();
             }
             case 1 -> {
-                UI ui = new UI(this);
+                ui = new UI(this);
                 ui.setVisible(true);
             }
             default -> {
@@ -37,6 +38,22 @@ public class Application {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public InterfaceConsole getConsoleInterface() {
+        return consoleInterface;
+    }
+
+    public void setConsoleInterface(InterfaceConsole consoleInterface) {
+        this.consoleInterface = consoleInterface;
+    }
+
+    public UI getUi() {
+        return ui;
+    }
+
+    public void setUi(UI ui) {
+        this.ui = ui;
     }
 
     public static void main(String[] arg){
