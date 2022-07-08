@@ -5,8 +5,10 @@ import ar.com.arcom.bin.Producto;
 
 import javax.swing.*;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 /*
@@ -378,7 +380,6 @@ public class MySQLHelper {
         }
         return aux;
     }
-
     public boolean consultaSiExisteNombre(String nombre) {
         boolean aux = false;
         openConection();
@@ -412,5 +413,120 @@ public class MySQLHelper {
         }
         clean();
         return aux;
+    }
+
+
+    public boolean comprarListaArticulos(String nombre, List<Articulo> lista) {
+        boolean bool = false;
+        if (verificaDatos(lista)) {
+            int idPedido = agregarPedido(nombre);
+            for(Articulo articulo : lista)
+                if (!agregaOrden(idPedido, articulo.getId(),articulo.getCantidad(), articulo.getPrecio())){
+                    bool = false;
+                    break;
+                }
+            bool = true;
+        }
+        return bool;
+    }
+    private int agregarPedido(String usuario) {
+        int id = 0;
+        int client_id = getId("users_db","user",usuario);
+        String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
+        JOptionPane.showMessageDialog(null, timeStamp);
+        if (client_id != 0){
+            openConection();
+            if (openConnection){
+                try {
+                    statement = connection.createStatement();
+                    String sql;
+                    sql = "INSERT INTO bsi5brxpk0wz9ygdti6z.shopping_cart_db (id,client_id, date) VALUES(" +
+                            "0, "+
+                            client_id +
+                            ", '" +
+                            timeStamp +
+                            "')";
+                    statement.executeUpdate(sql);
+
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(null, e.getMessage());
+                }
+            }
+            clean();
+        }
+        id = getId("shopping_cart_db", "date",timeStamp);
+        return id;
+    }
+    private int getId(String dataBase, String label, String labelData) {
+        int pedido_id = 0;
+
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z." + dataBase + " where " + label + " = '" + labelData + "'";
+                resultSet = statement.executeQuery(sql);
+                if (resultSet.next()) pedido_id = resultSet.getInt("id");
+
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+
+        return pedido_id;
+    }
+    private boolean agregaOrden(int idPedido,int idProducto, int cantidad, float precio) {
+        boolean bool = false;
+        JOptionPane.showMessageDialog(null, "idPedido = " + idPedido + " | idProducto = " + idProducto + " | cantidad = " + cantidad);
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "INSERT INTO bsi5brxpk0wz9ygdti6z.order_db (id,product_id,shoping_cart_id,amount) VALUES(0, "
+                        + idProducto + ", "
+                        + idPedido + ", "
+                        + cantidad + ", "
+                        + precio
+                        + ")";
+                statement.executeUpdate(sql);
+                bool = true;
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+
+        return bool;
+    }
+
+    private boolean verificaDatos(List<Articulo> lista) {
+        List<Boolean> aux = new ArrayList<>();
+        for (Articulo articulo : lista) {
+            openConection();
+            if (openConnection){
+                try {
+                    statement = connection.createStatement();
+                    String sql;
+                    sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db WHERE " + "id" + " = " + articulo.getId();
+                    resultSet = statement.executeQuery(sql);
+                    if(resultSet.next()){
+                        if (resultSet.getInt("id") == articulo.getId() &&
+                                resultSet.getString("nombre").equals(articulo.getNombre()) &&
+                                resultSet.getFloat("precio") == articulo.getPrecio()
+                        ) aux.add(true);
+                        else aux.add(false);
+                    } else JOptionPane.showMessageDialog(null, "ERROR: no hay resultados para la comparacion");
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(null, e.getMessage());
+                }
+            }
+            clean();
+        }
+        int i = 0;
+        while (i < aux.size() && aux.get(i)) i++;
+        return i >= aux.size();
     }
 }

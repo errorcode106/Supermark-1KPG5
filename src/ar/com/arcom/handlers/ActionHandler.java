@@ -133,8 +133,11 @@ public class ActionHandler {
         }
     }
 
-    public void comprar() {
-        // comparar si esta bien la lista de articulos con la lista de pedidos de la base de datos
+    public void comprar(UIHelper uiHelper) {
+        List<Articulo> lista = ((Cliente)application.getUsuario()).getCarrito().getArticulos();
+        if(!mySQLHelper.comprarListaArticulos(application.getUsuario().getNombre(),lista)) uiHelper.error(2);
+        ((Cliente)(application.getUsuario())).getCarrito().setArticulos(null);
+        System.gc();
     }
     public void vaciarCarrito() {
         for(Articulo articulo : ((Cliente)(application.getUsuario())).getCarrito().getArticulos())
@@ -159,8 +162,11 @@ public class ActionHandler {
     // ----------------------------------------------------------------
     // Métodos de Administrador
     // ----------------------------------------------------------------
-    public void modificarProducto(UIHelper uiHelper) {
-        JOptionPane.showMessageDialog(null, uiHelper.getNombre());
+    public void modificarProducto(UIHelper uiHelper, boolean aDeBaseDatos) {
+        if (aDeBaseDatos){
+            int valor = uiHelper.getID("modificar",true);
+            if (valor != 0) uiHelper.configuraUI(3);
+        }
     }
     public boolean consultaSiExisteProducto(String nombre) {
         return mySQLHelper.consultaSiExisteNombre(nombre);

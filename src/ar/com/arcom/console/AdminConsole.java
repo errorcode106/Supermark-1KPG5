@@ -37,8 +37,8 @@ public class AdminConsole implements UIHelper, EndUp {
             respuesta = menuPrincipal();
             switch (respuesta){
                 case 0 -> actionHandler.cerrarSesion(this);
-                case 1 -> actionHandler.configuraUI(this,2);
-                case 2 -> actionHandler.configuraUI(this,3);
+                case 1 -> actionHandler.configuraUI(this,7);
+                case 2 -> actionHandler.configuraUI(this,8);
                 case 3 -> {}
                 case 4 -> {}
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
@@ -50,7 +50,7 @@ public class AdminConsole implements UIHelper, EndUp {
         do {
             respuesta = menuVerProductos();
             switch (respuesta){
-                case 1 -> actionHandler.configuraUI(this,3);
+                case 1 -> actionHandler.configuraUI(this,8);
                 case 2 -> actionHandler.cargarProducto(this);
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
@@ -62,7 +62,7 @@ public class AdminConsole implements UIHelper, EndUp {
         do {
             respuesta = menuModificarProducto();
             switch (respuesta){
-                case 1 -> actionHandler.modificarProducto(this);
+                case 1 -> actionHandler.modificarProducto(this,true);
                 case 2 -> actionHandler.cargarProducto(this);
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
@@ -211,11 +211,11 @@ public class AdminConsole implements UIHelper, EndUp {
     @Override
     public void configuraUI(int valor) {
         switch (valor){
-            case 1 -> menuPrincipalFlujo();
-            case 2 -> menuVerProductoFlujo();
-            case 3 -> menuModificalProductoFlujo();
-            case 4 -> {}
-            case 5 -> {}
+            case 6 -> menuPrincipalFlujo();
+            case 7 -> menuVerProductoFlujo();
+            case 8 -> menuModificalProductoFlujo();
+            case 9 -> {}
+            case 10 -> {}
             default -> {}
         }
     }

@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UI extends JFrame implements UIHelper, EndUp {
-    public final int CLIENTE_UI = 0, ADMINISTRADOR_UI = 10;
-    public final int CLIENTE_VER_CARRITOS = 1, CLIENTE_VER_PRODUCTOS = 2, CLIENTE_MODIFICAR_CARRITO = 3;
+    public final int CLIENTE_UI = 1, ADMINISTRADOR_UI = 6;
+    public final int CLIENTE_VER_CARRITOS = 3, CLIENTE_VER_PRODUCTOS = 2, CLIENTE_MODIFICAR_CARRITO = 4, CLIENTE_COMPRAR = 5;
     public final int ADMINISTRADOR_1 = 11, ADMINISTRADOR_2 = 12, ADMINISTRADOR_3 = 13;
 
     private Application application;
@@ -255,15 +255,15 @@ public class UI extends JFrame implements UIHelper, EndUp {
         table.getColumnModel().getColumn(3).setPreferredWidth(100);
         table.getColumnModel().getColumn(4).setPreferredWidth(100);
         table.getColumnModel().getColumn(5).setPreferredWidth(100);
-
+        table.setRowSelectionAllowed(true);
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                id = Integer.parseInt((String)table.getValueAt(table.getSelectedRow(),0));
+                id = (Integer) table.getValueAt(table.getSelectedRow(),0);
             }
 
         });
-
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         scrollPane.setViewportView(table);
         getContentPane().add(panel_table, BorderLayout.CENTER);
         panel_table.add(scrollPane, BorderLayout.CENTER);
@@ -335,15 +335,15 @@ public class UI extends JFrame implements UIHelper, EndUp {
         table.getColumnModel().getColumn(2).setPreferredWidth(100);
         table.getColumnModel().getColumn(3).setPreferredWidth(100);
         table.getColumnModel().getColumn(3).setPreferredWidth(100);
-
+        table.setRowSelectionAllowed(true);
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                id = Integer.parseInt((String)table.getValueAt(table.getSelectedRow(),0));
+                id = (Integer)table.getValueAt(table.getSelectedRow(),0);
             }
 
         });
-
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         scrollPane.setViewportView(table);
         getContentPane().add(panel_table, BorderLayout.CENTER);
         panel_table.add(scrollPane, BorderLayout.CENTER);
@@ -415,11 +415,11 @@ public class UI extends JFrame implements UIHelper, EndUp {
 
         for(int i = 0; i < objects.length; i++){
             objects[i] = new Object[]{
-                    productos.get(i).get(0),
+                    Integer.parseInt(productos.get(i).get(0)),
                     productos.get(i).get(1),
                     productos.get(i).get(2),
-                    productos.get(i).get(3),
-                    productos.get(i).get(4)
+                    Float.parseFloat(productos.get(i).get(3)),
+                    Integer.parseInt(productos.get(i).get(4))
             };
         }
         return objects;
@@ -461,9 +461,10 @@ public class UI extends JFrame implements UIHelper, EndUp {
     public void configuraUI(int valor) {
         switch(valor){
             case CLIENTE_UI -> menuPrincipalCliente();
+            case CLIENTE_VER_PRODUCTOS -> menuVerProductosCliente();
             case CLIENTE_VER_CARRITOS -> menuVerCarritoCliente();
             case CLIENTE_MODIFICAR_CARRITO -> {}
-            case CLIENTE_VER_PRODUCTOS -> menuVerProductosCliente();
+            case CLIENTE_COMPRAR -> {}
             case ADMINISTRADOR_UI -> {createAdminInterface();}
             case 11 -> {}
             case 12 -> {}

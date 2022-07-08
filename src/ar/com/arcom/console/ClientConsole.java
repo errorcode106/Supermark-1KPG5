@@ -64,7 +64,7 @@ public class ClientConsole implements UIHelper, EndUp {
                 case 1 -> actionHandler.configuraUI(this,2);
                 case 2 -> actionHandler.configuraUI(this,4);
                 case 3 -> actionHandler.vaciarCarrito();
-                case 4 -> actionHandler.comprar();
+                case 4 -> actionHandler.configuraUI(this,5);
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);
@@ -85,7 +85,7 @@ public class ClientConsole implements UIHelper, EndUp {
         do {
             respuesta = menuCompra();
             switch (respuesta){
-                case 1 -> actionHandler.comprar();
+                case 1 -> actionHandler.comprar(this);
                 //case 2 -> actionHandler.configuraUI(this,3);
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
@@ -328,6 +328,10 @@ public class ClientConsole implements UIHelper, EndUp {
             }
             case 1 -> {
                 System.out.println("ERROR: El Articulo seleccionado no es correcto.");
+                System.out.println("----------------------------------------------------");
+            }
+            case 2 -> {
+                System.out.println("ERROR: No se pudo realizar la compra.");
                 System.out.println("----------------------------------------------------");
             }
             default -> {

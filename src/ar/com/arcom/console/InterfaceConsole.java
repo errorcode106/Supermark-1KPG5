@@ -100,7 +100,7 @@ public class InterfaceConsole implements Login {
                 actionHandler.configuraUI(new ClientConsole(application,actionHandler),1);
             }
             case 2 -> {
-                actionHandler.configuraUI(new AdminConsole(application,actionHandler),1);
+                actionHandler.configuraUI(new AdminConsole(application,actionHandler),6);
             }
             case 3 -> {
                 System.out.println("----------------------------------------------------");

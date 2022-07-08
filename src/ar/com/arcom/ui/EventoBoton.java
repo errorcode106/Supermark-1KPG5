@@ -40,7 +40,7 @@ public class EventoBoton implements ActionListener {
             case "cmd_inicio_cliente" -> actionHandler.configuraUI(frame,frame.CLIENTE_UI);
             case "cmd_products" -> actionHandler.configuraUI(frame,frame.CLIENTE_VER_PRODUCTOS);
             case "cmd_add" -> actionHandler.agregaAlCarrito(frame);
-
+            case "cmd_edit" -> actionHandler.modificarProducto(frame, false);
             default -> {}
         }
     }

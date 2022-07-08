@@ -9,7 +9,8 @@ public class DataBaseInfo {
 // pruebas misteriosas e ilegales bsi5brxpk0wz9ygdti6z
 
     public DataBaseInfo() {
-        setDefaultDataBaseInfo();
+        //setDefaultDataBaseInfo();
+        setCustomDataBaseInfo();
     }
 
     private void setDefaultDataBaseInfo(){
@@ -18,6 +19,14 @@ public class DataBaseInfo {
         USER = "ulgg0or7rymoucea";
         PASSWORD = "KbmgO9lZCsLyLnKgWcGa";
     }
+
+    private void setCustomDataBaseInfo(){
+        JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+        DB_URL = "jdbc:mysql://127.0.0.1";
+        USER = "root";
+        PASSWORD = "1234567890f";
+    }
+
     /*private void registerJDBCDriver(){
     //PASO 2: Registrar JDBC driver
     try{
