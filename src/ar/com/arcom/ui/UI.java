@@ -3,7 +3,6 @@ package ar.com.arcom.ui;
 import ar.com.arcom.Application;
 import ar.com.arcom.bin.Articulo;
 import ar.com.arcom.bin.Cliente;
-import ar.com.arcom.bin.Producto;
 import ar.com.arcom.handlers.EndUp;
 import ar.com.arcom.handlers.UIHelper;
 
@@ -13,13 +12,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UI extends JFrame implements UIHelper, EndUp {
     public final int CLIENTE_UI = 1, ADMINISTRADOR_UI = 6;
     public final int CLIENTE_VER_CARRITOS = 3, CLIENTE_VER_PRODUCTOS = 2, CLIENTE_MODIFICAR_CARRITO = 4, CLIENTE_COMPRAR = 5;
-    public final int ADMINISTRADOR_1 = 11, ADMINISTRADOR_2 = 12, ADMINISTRADOR_3 = 13;
+    public final int ADMINISTRADOR_VER_PRODUCTOS = 11, ADMINISTRADOR_MODIFICAR_PRODUCTO = 12, ADMINISTRADOR_VER_USUARIOS = 13;
 
     private Application application;
     private EventoBoton eventoBoton;
@@ -27,7 +25,7 @@ public class UI extends JFrame implements UIHelper, EndUp {
     private JPanel contentPane, panel_table,panel_total;
     private JTable table;
 
-    private int id;
+    private int id, id_aBaseDatos;
 
     private JTextPane txt_info;
     private JLabel lbl_icon,lbl_logo,lbl_total,lbl_total_precio;
@@ -56,6 +54,7 @@ public class UI extends JFrame implements UIHelper, EndUp {
         setLocation(pantalla.width/2-(getWidth()/2), pantalla.height/2-(getHeight()/2));
 
         id = 0;
+        id_aBaseDatos = 0;
         // Se cargan y se inicializan los componentes de la ventana principal y otros.
         initialize();
     }
@@ -130,6 +129,7 @@ public class UI extends JFrame implements UIHelper, EndUp {
         btn_secundary_2.setAlignmentX(Component.CENTER_ALIGNMENT);
         btn_secundary_2.setEnabled(false);
         btn_secundary_2.setActionCommand("cmd_edit");
+        btn_secundary_2.addActionListener(eventoBoton);
         panel_secundaryButtons.add(btn_secundary_2);
         btn_secundary_2.setMinimumSize(new Dimension(71, 40));
         btn_secundary_2.setForeground(Color.WHITE);
@@ -185,6 +185,15 @@ public class UI extends JFrame implements UIHelper, EndUp {
         setVisible(true);
         if (txt_info != null) update();
     }
+    private void agregarQuitar(){
+        Articulo articulo = ((Cliente)(application.getUsuario())).getCarrito().getArticulo(id);
+        if (articulo != null) {
+            JDialogAgregarQuitar jDialogAgregarQuitar = new JDialogAgregarQuitar(articulo,application);
+            jDialogAgregarQuitar.setModal(true);
+            jDialogAgregarQuitar.setVisible(true);
+        }
+        configuraUI(3);
+    }
 
     // ----------------------------------------------------------------
     // Métodos de opciones
@@ -238,7 +247,7 @@ public class UI extends JFrame implements UIHelper, EndUp {
         table.setForeground(new Color(0, 0, 0));
         table.setBackground(new Color(255, 255, 255));
         table.setModel(new DefaultTableModel(
-                createListArtículos(((Cliente)(application.getUsuario())).getCarrito().getArticulos()),
+                createListArticulos(((Cliente)(application.getUsuario())).getCarrito().getArticulos()),
                 new String[]{
                         "ID",
                         "Producto",
@@ -247,7 +256,12 @@ public class UI extends JFrame implements UIHelper, EndUp {
                         "Cantidad",
                         "Sub Total"
                 }
-        ));
+        ){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        });
 
         table.getColumnModel().getColumn(0).setPreferredWidth(40);
         table.getColumnModel().getColumn(1).setPreferredWidth(150);
@@ -328,7 +342,12 @@ public class UI extends JFrame implements UIHelper, EndUp {
                         "Precio",
                         "Existencias"
                 }
-        ));
+        ){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        });
 
         table.getColumnModel().getColumn(0).setPreferredWidth(40);
         table.getColumnModel().getColumn(1).setPreferredWidth(150);
@@ -339,59 +358,15 @@ public class UI extends JFrame implements UIHelper, EndUp {
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                id = (Integer)table.getValueAt(table.getSelectedRow(),0);
+                id_aBaseDatos = (Integer)table.getValueAt(table.getSelectedRow(),0);
             }
 
         });
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setCellSelectionEnabled(false);
         scrollPane.setViewportView(table);
         getContentPane().add(panel_table, BorderLayout.CENTER);
         panel_table.add(scrollPane, BorderLayout.CENTER);
-
-        btn_secundary_1.setText("Volver");
-        btn_secundary_1.setActionCommand("cmd_inicio_cliente");
-
-        btn_secundary_2.setText("");
-        btn_secundary_2.setEnabled(false);
-        btn_secundary_2.setActionCommand("cmd_edit");
-
-        btn_secundary_3.setText("Agregar");
-        btn_secundary_3.setActionCommand("cmd_add");
-
-        btn_primary.setText("Ver carrito");
-        btn_primary.setActionCommand("cmd_to_shopping_cart");
-
-        getContentPane().repaint();
-    }
-
-    private void menuModificarProductoDelCarrito(){
-        int i = 0;
-        while (i < panel_table.getComponents().length && panel_table.getComponents()[i].getClass() != JScrollPane.class) i++;
-        if (i<panel_table.getComponents().length) panel_table.remove(scrollPane);
-        if (panel_total != null) panel_table.remove(panel_total);
-        panel_table.updateUI();
-
-        btn_secundary_1.setText("Volver");
-        btn_secundary_1.setActionCommand("cmd_inicio_cliente");
-
-        btn_secundary_2.setText("");
-        btn_secundary_2.setEnabled(false);
-        btn_secundary_2.setActionCommand("cmd_edit");
-
-        btn_secundary_3.setText("Agregar");
-        btn_secundary_3.setActionCommand("cmd_add");
-
-        btn_primary.setText("Ver carrito");
-        btn_primary.setActionCommand("cmd_to_shopping_cart");
-
-        getContentPane().repaint();
-    }
-    private void menuCompra(){
-        int i = 0;
-        while (i < panel_table.getComponents().length && panel_table.getComponents()[i].getClass() != JScrollPane.class) i++;
-        if (i<panel_table.getComponents().length) panel_table.remove(scrollPane);
-        if (panel_total != null) panel_table.remove(panel_total);
-        panel_table.updateUI();
 
         btn_secundary_1.setText("Volver");
         btn_secundary_1.setActionCommand("cmd_inicio_cliente");
@@ -424,7 +399,7 @@ public class UI extends JFrame implements UIHelper, EndUp {
         }
         return objects;
     }
-    private Object[][] createListArtículos( List<Articulo> articulos){
+    private Object[][] createListArticulos(List<Articulo> articulos){
         Object[][] objects = new Object[articulos.size()][6];
 
         for(int i = 0; i < objects.length; i++){
@@ -442,14 +417,170 @@ public class UI extends JFrame implements UIHelper, EndUp {
 
     // Métodos asociados al administrador
     private void createAdminInterface() {
+        int i = 0;
+        while (i < panel_table.getComponents().length && panel_table.getComponents()[i].getClass() != JScrollPane.class) i++;
+        if (i<panel_table.getComponents().length) panel_table.remove(scrollPane);
 
+        if (panel_total != null) panel_table.remove(panel_total);
+
+        panel_table.updateUI();
+
+        panel_table.add(lbl_logo);
+        lbl_logo.setIcon(new ImageIcon("src/ar/com/arcom/icon/logo.png"));
+
+        btn_secundary_1.setText("Cerrar Sesión");
+        btn_secundary_1.setActionCommand("cmd_logoff");
+
+        btn_secundary_2.setText("");
+        btn_secundary_2.setActionCommand("cmd_edit");
+        btn_secundary_2.setEnabled(false);
+
+        btn_secundary_3.setText("Ver Usuarios");
+        btn_secundary_3.setActionCommand("cmd_users");
+
+        btn_primary.setText("Ver productos");
+        btn_primary.setActionCommand("cmd_products_admin");
+
+        getContentPane().repaint();
     }
+    private void menuVerProductosAdministrador(){
+        int i = 0;
+        while (i < panel_table.getComponents().length && panel_table.getComponents()[i].getClass() != JScrollPane.class) i++;
+        if (i<panel_table.getComponents().length) panel_table.remove(scrollPane);
+        if (panel_total != null) panel_table.remove(panel_total);
+        panel_table.updateUI();
 
-    // ----------------------------------------------------------------
-    // Métodos generales
-    // ----------------------------------------------------------------
-    private void tablaFix(String[] etiquetas, List<List<String>> lista, boolean necesitaTotal){}
-    private void cargaLista(int valor){}
+        lbl_logo.setIcon(null);
+        scrollPane = new JScrollPane();
+        scrollPane.setBorder(null);
+        scrollPane.setBackground(new Color(255, 255, 255));
+        scrollPane.setOpaque(false);
+        table = new JTable();
+        table.setAutoCreateRowSorter(true);
+        table.setBorder(null);
+        table.setOpaque(false);
+        table.getTableHeader().setOpaque(false);
+        table.setGridColor(new Color(192, 192, 192));
+        table.setForeground(new Color(0, 0, 0));
+        table.setBackground(new Color(255, 255, 255));
+        table.setModel(new DefaultTableModel(
+                createListProductos(eventoBoton.getActionHandler().obtenerProductos(true)),
+                new String[]{
+                        "ID",
+                        "Producto",
+                        "Descripcion",
+                        "Precio",
+                        "Existencias"
+                }
+        ){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        });
+
+        table.getColumnModel().getColumn(0).setPreferredWidth(40);
+        table.getColumnModel().getColumn(1).setPreferredWidth(150);
+        table.getColumnModel().getColumn(2).setPreferredWidth(100);
+        table.getColumnModel().getColumn(3).setPreferredWidth(100);
+        table.getColumnModel().getColumn(3).setPreferredWidth(100);
+        table.setRowSelectionAllowed(true);
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                id_aBaseDatos = (Integer)table.getValueAt(table.getSelectedRow(),0);
+            }
+
+        });
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setCellSelectionEnabled(false);
+        scrollPane.setViewportView(table);
+        getContentPane().add(panel_table, BorderLayout.CENTER);
+        panel_table.add(scrollPane, BorderLayout.CENTER);
+
+        btn_secundary_1.setText("Volver");
+        btn_secundary_1.setActionCommand("cmd_inicio_administrador");
+
+        btn_secundary_2.setText("");
+        btn_secundary_2.setEnabled(false);
+        btn_secundary_2.setActionCommand("cmd_edit");
+
+        btn_secundary_3.setText("Modificar");
+        btn_secundary_3.setActionCommand("cmd_edit");
+
+        btn_primary.setText("Agregar nuevo producto");
+        btn_primary.setActionCommand("cmd_add_new_product");
+
+        getContentPane().repaint();
+    }
+    private void menuVerUsuarios(){
+        int i = 0;
+        while (i < panel_table.getComponents().length && panel_table.getComponents()[i].getClass() != JScrollPane.class) i++;
+        if (i<panel_table.getComponents().length) panel_table.remove(scrollPane);
+        if (panel_total != null) panel_table.remove(panel_total);
+        panel_table.updateUI();
+
+        lbl_logo.setIcon(null);
+        scrollPane = new JScrollPane();
+        scrollPane.setBorder(null);
+        scrollPane.setBackground(new Color(255, 255, 255));
+        scrollPane.setOpaque(false);
+        table = new JTable();
+        table.setAutoCreateRowSorter(true);
+        table.setBorder(null);
+        table.setOpaque(false);
+        table.getTableHeader().setOpaque(false);
+        table.setGridColor(new Color(192, 192, 192));
+        table.setForeground(new Color(0, 0, 0));
+        table.setBackground(new Color(255, 255, 255));
+        table.setModel(new DefaultTableModel(
+                createListProductos(eventoBoton.getActionHandler().obtenerProductos(true)),
+                new String[]{
+                        "ID",
+                        "Usuario",
+                        "Pedidos",
+                }
+        ){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        });
+
+        table.getColumnModel().getColumn(0).setPreferredWidth(40);
+        table.getColumnModel().getColumn(1).setPreferredWidth(150);
+        table.getColumnModel().getColumn(2).setPreferredWidth(100);
+        table.getColumnModel().getColumn(3).setPreferredWidth(100);
+        table.getColumnModel().getColumn(3).setPreferredWidth(100);
+        table.setRowSelectionAllowed(true);
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                id_aBaseDatos = (Integer)table.getValueAt(table.getSelectedRow(),0);
+            }
+
+        });
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setCellSelectionEnabled(false);
+        scrollPane.setViewportView(table);
+        getContentPane().add(panel_table, BorderLayout.CENTER);
+        panel_table.add(scrollPane, BorderLayout.CENTER);
+
+        btn_secundary_1.setText("Volver");
+        btn_secundary_1.setActionCommand("cmd_inicio_administrador");
+
+        btn_secundary_2.setText("");
+        btn_secundary_2.setEnabled(false);
+        btn_secundary_2.setActionCommand("cmd_ver_compras");
+
+        btn_secundary_3.setText("Ver pedidos");
+        btn_secundary_3.setActionCommand("cmd_ver_pedidos");
+
+        btn_primary.setText("Ver productos en su carrito");
+        btn_primary.setActionCommand("cmd_ver_carrito");
+
+        getContentPane().repaint();
+    }
     // ----------------------------------------------------------------
     // Métodos generales
     // ----------------------------------------------------------------
@@ -463,22 +594,26 @@ public class UI extends JFrame implements UIHelper, EndUp {
             case CLIENTE_UI -> menuPrincipalCliente();
             case CLIENTE_VER_PRODUCTOS -> menuVerProductosCliente();
             case CLIENTE_VER_CARRITOS -> menuVerCarritoCliente();
-            case CLIENTE_MODIFICAR_CARRITO -> {}
+            case CLIENTE_MODIFICAR_CARRITO -> agregarQuitar();
             case CLIENTE_COMPRAR -> {}
-            case ADMINISTRADOR_UI -> {createAdminInterface();}
-            case 11 -> {}
-            case 12 -> {}
-            case 13 -> {}
+            case ADMINISTRADOR_UI -> createAdminInterface();
+            case ADMINISTRADOR_VER_PRODUCTOS -> menuVerProductosAdministrador();
+            //case ADMINISTRADOR_MODIFICAR_PRODUCTO -> menuVerProductosAdministrador();
+            case ADMINISTRADOR_VER_USUARIOS -> menuVerUsuarios();
             default -> {}
         }
     }
     @Override
     public int getID(String valor, boolean aDeBaseDatos) {
-        return id;
+        return (aDeBaseDatos) ? id_aBaseDatos : id;
     }
     @Override
     public int getCantidad(int id, String valor) {
-        return Integer.parseInt(JOptionPane.showInputDialog("Ingrese la cantidad: "));
+        String respuesta = JOptionPane.showInputDialog("Ingrese la cantidad.");
+        int i = 0;
+        while(i < respuesta.length() && Character.isDigit(respuesta.charAt(i))) i++;
+        if (i < respuesta.length()) respuesta ="0";
+        return Integer.parseInt(respuesta);
     }
     @Override
     public void error(int valor) {

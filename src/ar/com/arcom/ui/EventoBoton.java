@@ -2,6 +2,7 @@ package ar.com.arcom.ui;
 
 import ar.com.arcom.Application;
 import ar.com.arcom.handlers.ActionHandler;
+import ar.com.arcom.handlers.EndUp;
 import ar.com.arcom.handlers.Login;
 import ar.com.arcom.ui.UI;
 
@@ -13,6 +14,7 @@ public class EventoBoton implements ActionListener {
     private ActionHandler actionHandler;
     private Login login;
     private UI frame;
+    private EndUp endUp;
 
     public EventoBoton(Login login, Application application) {
         this.login = login;
@@ -22,6 +24,11 @@ public class EventoBoton implements ActionListener {
     public EventoBoton(UI frame, Application application) {
         this.frame = frame;
         this.application = application;
+        actionHandler = new ActionHandler(application);
+    }
+    public EventoBoton(Application application, EndUp endUp) {
+        this.application = application;
+        this.endUp = endUp;
         actionHandler = new ActionHandler(application);
     }
 
@@ -41,6 +48,11 @@ public class EventoBoton implements ActionListener {
             case "cmd_products" -> actionHandler.configuraUI(frame,frame.CLIENTE_VER_PRODUCTOS);
             case "cmd_add" -> actionHandler.agregaAlCarrito(frame);
             case "cmd_edit" -> actionHandler.modificarProducto(frame, false);
+            case "cmd_buy" -> actionHandler.comprar(frame);
+            case "cmd_cancel" -> actionHandler.dispose(endUp);
+            case "cmd_acept" -> actionHandler.acept(endUp);
+            case "cmd_plus" -> actionHandler.aumentar(endUp);
+            case "cmd_minus" -> actionHandler.mermar(endUp);
             default -> {}
         }
     }

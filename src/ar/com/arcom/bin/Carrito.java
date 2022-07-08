@@ -78,4 +78,12 @@ public class Carrito {
     public String getFechahora() {
         return fechahora;
     }
+
+    public Articulo getArticulo(int id) {
+        int i = 0;
+        if (articulos.size()>0) {
+            while (i < articulos.size() && articulos.get(i).getId() != id) i++;
+        } else i++;
+        return (i < articulos.size()) ? articulos.get(i) : null;
+    }
 }

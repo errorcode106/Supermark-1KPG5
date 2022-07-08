@@ -350,22 +350,18 @@ public class ClientConsole implements UIHelper, EndUp {
         nombre = scanner.nextLine();
         return nombre;
     }
-
     @Override
     public String getDescipcion() {
         return null;
     }
-
     @Override
     public float getPrecio() {
         return 0;
     }
-
     @Override
     public int getStock() {
         return 0;
     }
-
     @Override
     public void endUp(int valor) {
     }

@@ -109,7 +109,7 @@ public class ActionHandler {
 
         if(id != 0){
             int cantidad = uiHelper.getCantidad(id, "agregar");
-            if (cantidad != 0) {
+            if (cantidad <= 0) {
                 if(mySQLHelper.consultaStock(id, cantidad)){
                     mySQLHelper.quitaStock(id, cantidad);
                     ((Cliente)(application.getUsuario())).getCarrito().agregaCantidad(id, cantidad);
@@ -136,8 +136,9 @@ public class ActionHandler {
     public void comprar(UIHelper uiHelper) {
         List<Articulo> lista = ((Cliente)application.getUsuario()).getCarrito().getArticulos();
         if(!mySQLHelper.comprarListaArticulos(application.getUsuario().getNombre(),lista)) uiHelper.error(2);
-        ((Cliente)(application.getUsuario())).getCarrito().setArticulos(null);
+        ((Cliente)(application.getUsuario())).getCarrito().setArticulos(new ArrayList<>());
         System.gc();
+        uiHelper.configuraUI(3);
     }
     public void vaciarCarrito() {
         for(Articulo articulo : ((Cliente)(application.getUsuario())).getCarrito().getArticulos())
@@ -166,6 +167,9 @@ public class ActionHandler {
         if (aDeBaseDatos){
             int valor = uiHelper.getID("modificar",true);
             if (valor != 0) uiHelper.configuraUI(3);
+        } else {
+            int valor = uiHelper.getID("modificar",false);
+            if (valor != 0) uiHelper.configuraUI(4);
         }
     }
     public boolean consultaSiExisteProducto(String nombre) {
@@ -192,5 +196,19 @@ public class ActionHandler {
     public int buscarProductoNombre(UIHelper uiHelper) {
         String nombre = uiHelper.getNombre();
         return mySQLHelper.buscaPorNombre(nombre);
+    }
+
+    public void mermar(EndUp endUp) {
+        endUp.endUp(3);
+    }
+    public void aumentar(EndUp endUp) {
+        endUp.endUp(2);
+    }
+    public void acept(EndUp endUp) {
+        endUp.endUp(1);
+
+    }
+    public void dispose(EndUp endUp) {
+        endUp.endUp(0);
     }
 }

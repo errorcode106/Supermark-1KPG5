@@ -293,7 +293,6 @@ public class MySQLHelper {
         clean();
     }
 
-
     public boolean consultaStock(int id, int cantidad) {
         boolean aux = false;
         openConection();
@@ -415,7 +414,6 @@ public class MySQLHelper {
         return aux;
     }
 
-
     public boolean comprarListaArticulos(String nombre, List<Articulo> lista) {
         boolean bool = false;
         if (verificaDatos(lista)) {
@@ -433,7 +431,6 @@ public class MySQLHelper {
         int id = 0;
         int client_id = getId("users_db","user",usuario);
         String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
-        JOptionPane.showMessageDialog(null, timeStamp);
         if (client_id != 0){
             openConection();
             if (openConnection){
@@ -479,13 +476,12 @@ public class MySQLHelper {
     }
     private boolean agregaOrden(int idPedido,int idProducto, int cantidad, float precio) {
         boolean bool = false;
-        JOptionPane.showMessageDialog(null, "idPedido = " + idPedido + " | idProducto = " + idProducto + " | cantidad = " + cantidad);
         openConection();
         if (openConnection){
             try {
                 statement = connection.createStatement();
                 String sql;
-                sql = "INSERT INTO bsi5brxpk0wz9ygdti6z.order_db (id,product_id,shoping_cart_id,amount) VALUES(0, "
+                sql = "INSERT INTO bsi5brxpk0wz9ygdti6z.order_db (id,product_id,shoping_cart_id,amount,price) VALUES(0, "
                         + idProducto + ", "
                         + idPedido + ", "
                         + cantidad + ", "
@@ -501,7 +497,6 @@ public class MySQLHelper {
 
         return bool;
     }
-
     private boolean verificaDatos(List<Articulo> lista) {
         List<Boolean> aux = new ArrayList<>();
         for (Articulo articulo : lista) {
