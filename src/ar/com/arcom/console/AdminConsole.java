@@ -6,7 +6,6 @@ import ar.com.arcom.handlers.ActionHandler;
 import ar.com.arcom.handlers.EndUp;
 import ar.com.arcom.handlers.UIHelper;
 
-import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -62,8 +61,12 @@ public class AdminConsole implements UIHelper, EndUp {
         do {
             respuesta = menuModificarProducto();
             switch (respuesta){
-                case 1 -> actionHandler.modificarProducto(this,true);
-                case 2 -> actionHandler.cargarProducto(this);
+                case 1 -> actionHandler.agregarCantidadProducto(this,true);
+                case 2 -> actionHandler.quitarCantidadProducto(this,true);
+                case 3 -> {}
+                case 4 -> {}
+                case 5 -> {}
+                case 6 -> {}
 
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
@@ -123,6 +126,33 @@ public class AdminConsole implements UIHelper, EndUp {
         while(i < valor.length() && Character.isDigit(valor.charAt(i))) i++;
         if (i < valor.length()) valor ="-1";
         return Integer.parseInt(valor);
+    }
+    private int scanner(){
+        String valor = "";
+        int i;
+        i = 0;
+        System.out.print("Respuesta: ");
+        Scanner scanner = new Scanner(System.in);
+        valor = scanner.next();
+        while(i < valor.length() && Character.isDigit(valor.charAt(i))) i++;
+        if (i < valor.length()) valor ="-1";
+        return Integer.parseInt(valor);
+    }
+    private boolean verificaCantidad(int id, int cantidad, boolean operacion) {
+        if (application.getUsuario().getType() == 0){
+            if (operacion) return actionHandler.consultaStock(id, cantidad);
+            else return ((Cliente)(application.getUsuario())).getCarrito().verificaCantidad(id,cantidad);
+        } else {
+            return actionHandler.consultaStock(id, cantidad);
+        }
+    }
+    private boolean verificaID(int id, boolean aDeBaseDatos) {
+       if (application.getUsuario().getType() == 0) {
+           if (aDeBaseDatos) return actionHandler.consultaSiExiste(id);
+           else return ((Cliente) application.getUsuario()).getCarrito().consultaSiExisteID(id);
+       } else {
+           return actionHandler.consultaSiExiste(id);
+       }
     }
     private void tituloMenu(String cadena){
         System.out.println("----------------------------------------------------");
@@ -222,11 +252,51 @@ public class AdminConsole implements UIHelper, EndUp {
     }
     @Override
     public int getID(String valor, boolean aDeBaseDatos) {
-        return 0;
+        boolean aux = false;
+        int id = -1;
+        do{
+            System.out.println("----------------------------------------------------");
+            System.out.println("Ingrese el ID del producto a " + valor + " o ingrese 0 para cancelar.");
+
+            String str;
+            int i;
+            i = 0;
+            Scanner scanner = new Scanner(System.in);
+            str = scanner.next();
+            while(i < str.length() && Character.isDigit(str.charAt(i))) i++;
+            if (i < str.length()) {
+                str ="-1";
+                System.out.println("----------------------------------------------------");
+                System.out.println("-------->El valor ingresado es incorrecto <---------");
+            }
+            else {
+                id = Integer.parseInt(str);
+                if(verificaID(id, aDeBaseDatos)) aux = true;
+                if (!aux) {
+                    System.out.println("----------------------------------------------------");
+                    System.out.println("-------->El valor ingresado es incorrecto <---------");
+                }
+            }
+        }while (!aux && id != 0 );
+
+        return id;
     }
     @Override
     public int getCantidad(int id, String valor) {
-        return 0;
+        boolean aux = false;
+        int cantidad;
+        do{
+            System.out.println("----------------------------------------------------");
+            System.out.println("Ingrese la cantidad a " + valor + " o ingrese 0 para cancelar.");
+            cantidad = scanner();
+            if(cantidad !=0 && verificaCantidad(id, cantidad, valor.equalsIgnoreCase("agregar")))
+                aux = true;
+            if (!aux) {
+                System.out.println("----------------------------------------------------");
+                System.out.println("-------->El valor ingresado es incorrecto <---------");
+            }
+        }while (!aux && cantidad != 0);
+        return cantidad;
     }
     @Override
     public void error(int valor) {

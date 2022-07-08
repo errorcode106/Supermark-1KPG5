@@ -74,8 +74,8 @@ public class ClientConsole implements UIHelper, EndUp {
         do {
             respuesta = menuModificarProductoDelCarrito();
             switch (respuesta){
-                case 1 -> actionHandler.agregarCantidadAlArticuloEnCarrito(this);
-                case 2 -> actionHandler.quitarCantidadAlArticuloEnCarrito(this);
+                case 1 -> actionHandler.agregarCantidadProducto(this,false);
+                case 2 -> actionHandler.quitarCantidadProducto(this, true);
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);

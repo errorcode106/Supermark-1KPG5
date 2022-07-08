@@ -2,8 +2,6 @@ package ar.com.arcom.handlers;
 
 import ar.com.arcom.Application;
 import ar.com.arcom.bin.*;
-import ar.com.arcom.console.AdminConsole;
-import ar.com.arcom.console.ClientConsole;
 import ar.com.arcom.mysql.MySQLHelper;
 
 import javax.swing.*;
@@ -106,31 +104,44 @@ public class ActionHandler {
             }
         } uiHelper.error(1);
     }
-    public void agregarCantidadAlArticuloEnCarrito(UIHelper uiHelper){
+    public void agregarCantidadProducto(UIHelper uiHelper, boolean aBaseDeDatos){
         int id = uiHelper.getID("agregar", false);
 
-        if(id != 0){
+        if (aBaseDeDatos){
             int cantidad = uiHelper.getCantidad(id, "agregar");
-            if (cantidad <= 0) {
-                if(mySQLHelper.consultaStock(id, cantidad)){
-                    mySQLHelper.quitaStock(id, cantidad);
-                    ((Cliente)(application.getUsuario())).getCarrito().agregaCantidad(id, cantidad);
-                    ((Cliente)(application.getUsuario())).getCarrito().recalcularTotales();
-                } else uiHelper.error(0);
+            mySQLHelper.agregarStock(id, cantidad);
+        } else {
+            if(id != 0){
+                int cantidad = uiHelper.getCantidad(id, "agregar");
+                if (cantidad <= 0) {
+                    if(mySQLHelper.consultaStock(id, cantidad)){
+                        mySQLHelper.quitaStock(id, cantidad);
+                        ((Cliente)(application.getUsuario())).getCarrito().agregaCantidad(id, cantidad);
+                        ((Cliente)(application.getUsuario())).getCarrito().recalcularTotales();
+                    } else uiHelper.error(0);
+                }
             }
         }
     }
-    public void quitarCantidadAlArticuloEnCarrito(UIHelper uiHelper) {
+    public void quitarCantidadProducto(UIHelper uiHelper, boolean aBaseDeDatos) {
         int id = uiHelper.getID("quitar", false);
-
-        if(id != 0){
+        if (application.getUsuario().getType() == 0){
+            if(id != 0){
+                int cantidad = uiHelper.getCantidad(id, "quitar");
+                if (cantidad != 0) {
+                    if(((Cliente)(application.getUsuario())).getCarrito().verificaCantidad(id, cantidad)){
+                        mySQLHelper.agregarStock(id, cantidad);
+                        ((Cliente)(application.getUsuario())).getCarrito().quitarCantidad(id, cantidad);
+                        ((Cliente)(application.getUsuario())).getCarrito().recalcularTotales();
+                    } else uiHelper.error(0);
+                }
+            }
+        } else if(id != 0){
             int cantidad = uiHelper.getCantidad(id, "quitar");
             if (cantidad != 0) {
-                if(((Cliente)(application.getUsuario())).getCarrito().verificaCantidad(id, cantidad)){
-                    mySQLHelper.agregarStock(id, cantidad);
-                    ((Cliente)(application.getUsuario())).getCarrito().quitarCantidad(id, cantidad);
-                    ((Cliente)(application.getUsuario())).getCarrito().recalcularTotales();
-                } else uiHelper.error(0);
+                if(mySQLHelper.consultaStock(id, cantidad)){
+                    mySQLHelper.quitaStock(id, cantidad);
+                }
             }
         }
     }
