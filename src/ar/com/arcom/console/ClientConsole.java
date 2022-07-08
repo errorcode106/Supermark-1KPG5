@@ -75,7 +75,7 @@ public class ClientConsole implements UIHelper, EndUp {
             respuesta = menuModificarProductoDelCarrito();
             switch (respuesta){
                 case 1 -> actionHandler.agregarCantidadProducto(this,false);
-                case 2 -> actionHandler.quitarCantidadProducto(this, true);
+                case 2 -> actionHandler.quitarCantidadProducto(this);
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);
@@ -351,7 +351,7 @@ public class ClientConsole implements UIHelper, EndUp {
         return nombre;
     }
     @Override
-    public String getDescipcion() {
+    public String getDescripcion() {
         return null;
     }
     @Override

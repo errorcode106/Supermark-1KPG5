@@ -62,11 +62,10 @@ public class AdminConsole implements UIHelper, EndUp {
             respuesta = menuModificarProducto();
             switch (respuesta){
                 case 1 -> actionHandler.agregarCantidadProducto(this,true);
-                case 2 -> actionHandler.quitarCantidadProducto(this,true);
-                case 3 -> {}
-                case 4 -> {}
-                case 5 -> {}
-                case 6 -> {}
+                case 2 -> actionHandler.quitarCantidadProducto(this);
+                case 3 -> actionHandler.modificaNombre(this);
+                case 4 -> actionHandler.modificaDescripcion(this);
+                case 5 -> actionHandler.modificaPrecio(this);
 
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
@@ -313,7 +312,7 @@ public class AdminConsole implements UIHelper, EndUp {
         return nombre;
     }
     @Override
-    public String getDescipcion() {
+    public String getDescripcion() {
         String descripcion;
         System.out.println("----------------------------------------------------");
         System.out.println("Ingrese la descripcion del producto.");

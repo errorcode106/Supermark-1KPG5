@@ -7,7 +7,7 @@ public interface UIHelper {
     public void error(int valor);
 
     public String getNombre();
-    public String getDescipcion();
+    public String getDescripcion();
     public float getPrecio();
     public int getStock();
 }

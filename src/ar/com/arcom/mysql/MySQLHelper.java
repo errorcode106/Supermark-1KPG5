@@ -17,8 +17,6 @@ Pasos para usar JDBC:
 5. Armar el postulado SQL y enviarlo a ejecución usando el Statement.
 6. Recibir los resultados en el objeto ResultSet.
 */
-
-
 public class MySQLHelper {
     private Connection connection;
     private Statement statement;
@@ -578,7 +576,6 @@ public class MySQLHelper {
         clean();
         return listaFinal;
     }
-
     private List<List<String>> extractDataUsers(List<String> labels) {
         //PASO 3: Extraer datos de un ResulSet
         List<List<String>> valor = new ArrayList<>();
@@ -594,7 +591,6 @@ public class MySQLHelper {
         }
         return valor;
     }
-
     private List<List<String>> extractData(List<String> labels) {
         //PASO 3: Extraer datos de un ResulSet
         List<List<String>> valor = new ArrayList<>();
@@ -612,5 +608,54 @@ public class MySQLHelper {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
         return valor;
+    }
+
+    public void modificaNombre(int id, String nombre) {
+        boolean bool = false;
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "UPDATE `bsi5brxpk0wz9ygdti6z`.`products_db` SET `nombre` = '" + nombre + "' WHERE (`id` = '"+ id +"');";
+                statement.executeUpdate(sql);
+                bool = true;
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+    }
+    public void modificaDescripcion(int id, String descripcion) {
+        boolean bool = false;
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "UPDATE `bsi5brxpk0wz9ygdti6z`.`products_db` SET `descripcion` = '" + descripcion + "' WHERE (`id` = '"+ id +"');";
+                statement.executeUpdate(sql);
+                bool = true;
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+    }
+    public void modificaPrecio(int id, String precio) {
+        boolean bool = false;
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "UPDATE `bsi5brxpk0wz9ygdti6z`.`products_db` SET `precio` = '" + precio + "' WHERE (`id` = '"+ id +"');";
+                statement.executeUpdate(sql);
+                bool = true;
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
     }
 }

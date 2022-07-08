@@ -123,7 +123,7 @@ public class ActionHandler {
             }
         }
     }
-    public void quitarCantidadProducto(UIHelper uiHelper, boolean aBaseDeDatos) {
+    public void quitarCantidadProducto(UIHelper uiHelper) {
         int id = uiHelper.getID("quitar", false);
         if (application.getUsuario().getType() == 0){
             if(id != 0){
@@ -195,7 +195,7 @@ public class ActionHandler {
         String nombre = uiHelper.getNombre();
         if (!consultaSiExisteProducto(nombre))
             mySQLHelper.cargarProducto(new Producto(0,nombre,
-                    uiHelper.getDescipcion(),
+                    uiHelper.getDescripcion(),
                     uiHelper.getPrecio(),
                     uiHelper.getStock()
             ));
@@ -229,5 +229,18 @@ public class ActionHandler {
     }
     public void dispose(EndUp endUp) {
         endUp.endUp(0);
+    }
+
+    public void modificaNombre(UIHelper uiHelper) {
+        int id = uiHelper.getID("modificar",true);
+        mySQLHelper.modificaNombre(id,uiHelper.getNombre());
+    }
+    public void modificaDescripcion(UIHelper uiHelper) {
+        int id = uiHelper.getID("modificar",true);
+        mySQLHelper.modificaDescripcion(id,uiHelper.getDescripcion());
+    }
+    public void modificaPrecio(UIHelper uiHelper) {
+        int id = uiHelper.getID("modificar",true);
+        mySQLHelper.modificaPrecio(id,String.valueOf(uiHelper.getPrecio()));
     }
 }

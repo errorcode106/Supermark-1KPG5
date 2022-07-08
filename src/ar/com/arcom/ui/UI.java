@@ -638,7 +638,7 @@ public class UI extends JFrame implements UIHelper, EndUp {
         return null;
     }
     @Override
-    public String getDescipcion() {
+    public String getDescripcion() {
         return null;
     }
     @Override
