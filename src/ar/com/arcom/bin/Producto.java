@@ -17,6 +17,14 @@ public class Producto {
         this.stock = stock;
     }
 
+    public Producto() {
+        id = 0;
+        nombre = "";
+        descripcion = "";
+        precio = 0;
+        stock = 0;
+    }
+
     // Métodos
     public int getId() {
         return id;
@@ -80,6 +88,17 @@ public class Producto {
             this.stock -= unidades;
         }else {
             System.out.println("stock insuficiente");
+        }
+    }
+
+    public void set(String label, String labelData){
+        switch (label){
+            case "id" -> id = Integer.parseInt(labelData);
+            case "nombre" -> nombre = labelData;
+            case "descripcion" -> descripcion = labelData;
+            case "precio" -> precio = Float.parseFloat(labelData);
+            case "stock" -> stock = Integer.parseInt(labelData);
+            default -> {}
         }
     }
 }

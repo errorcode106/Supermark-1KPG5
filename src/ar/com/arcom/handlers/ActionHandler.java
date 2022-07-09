@@ -193,12 +193,15 @@ public class ActionHandler {
     }
     public void cargarProducto(UIHelper uiHelper) {
         String nombre = uiHelper.getNombre();
-        if (!consultaSiExisteProducto(nombre))
-            mySQLHelper.cargarProducto(new Producto(0,nombre,
-                    uiHelper.getDescripcion(),
-                    uiHelper.getPrecio(),
-                    uiHelper.getStock()
-            ));
+        if (nombre != null && !consultaSiExisteProducto(nombre)) {
+            String descripcion = uiHelper.getDescripcion();
+            float price = uiHelper.getPrecio();
+            int stock = uiHelper.getStock();
+            if(price > 0 && stock > 0){
+                mySQLHelper.cargarProducto(new Producto(0,nombre, descripcion, price, stock));
+            } else uiHelper.error(4);
+        } else uiHelper.error(3);
+        uiHelper.configuraUI(7);
     }
     public List<List<String>> obtenerUsuarios(boolean soloConPedidos) {
         return mySQLHelper.obtenerUsuarios(soloConPedidos);
@@ -230,7 +233,6 @@ public class ActionHandler {
     public void dispose(EndUp endUp) {
         endUp.endUp(0);
     }
-
     public void modificaNombre(UIHelper uiHelper) {
         int id = uiHelper.getID("modificar",true);
         mySQLHelper.modificaNombre(id,uiHelper.getNombre());
@@ -242,5 +244,13 @@ public class ActionHandler {
     public void modificaPrecio(UIHelper uiHelper) {
         int id = uiHelper.getID("modificar",true);
         mySQLHelper.modificaPrecio(id,String.valueOf(uiHelper.getPrecio()));
+    }
+
+    public void modificarProductoFinal(EndUp endUp) {
+        endUp.endUp(1);
+    }
+
+    public void verPedidos(UIHelper uiHelper) {
+        uiHelper.configuraUI(10);
     }
 }

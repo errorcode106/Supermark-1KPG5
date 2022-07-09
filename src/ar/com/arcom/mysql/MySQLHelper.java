@@ -54,7 +54,7 @@ public class MySQLHelper {
     private void clean(){
         //PASO4: Entorno de Limpieza
         try {
-            resultSet.close();
+            if (resultSet != null) resultSet.close();
             statement.close();
             connection.close();
         } catch (SQLException e) {
@@ -434,10 +434,8 @@ public class MySQLHelper {
                     String sql;
                     sql = "INSERT INTO bsi5brxpk0wz9ygdti6z.shopping_cart_db (id,client_id, date) VALUES(" +
                             "0, "+
-                            client_id +
-                            ", '" +
-                            timeStamp +
-                            "')";
+                            client_id + ", '" +
+                            timeStamp + "')";
                     statement.executeUpdate(sql);
 
                 } catch (SQLException e) {
@@ -643,7 +641,6 @@ public class MySQLHelper {
         clean();
     }
     public void modificaPrecio(int id, String precio) {
-        boolean bool = false;
         openConection();
         if (openConnection){
             try {
@@ -651,11 +648,49 @@ public class MySQLHelper {
                 String sql;
                 sql = "UPDATE `bsi5brxpk0wz9ygdti6z`.`products_db` SET `precio` = '" + precio + "' WHERE (`id` = '"+ id +"');";
                 statement.executeUpdate(sql);
-                bool = true;
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(null, e.getMessage());
             }
         }
         clean();
+    }
+    public void modificaStock(int id, String stock) {
+        int i = 0;
+        while(i < stock.length() && (stock.charAt(i) != ',')) i++;
+        if (i < stock.length()) stock = stock.replace(",",".");
+
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "UPDATE `bsi5brxpk0wz9ygdti6z`.`products_db` SET `stock` = '" + stock + "' WHERE (`id` = '"+ id +"');";
+                statement.executeUpdate(sql);
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+    }
+    public Producto obtenerProducto(int id) {
+         Producto producto = null;
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db WHERE " + "id" + " = " + "'" + id + "'";
+                resultSet = statement.executeQuery(sql);
+                if(resultSet.next()) {
+                    producto = new Producto();
+                    List<String> labels = Arrays.asList("id","nombre","descripcion","precio","stock");
+                    for (String label : labels) producto.set(label,resultSet.getString(label));
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+        return producto;
     }
 }

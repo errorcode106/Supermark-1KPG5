@@ -3,8 +3,10 @@ package ar.com.arcom.ui;
 import ar.com.arcom.Application;
 import ar.com.arcom.bin.Articulo;
 import ar.com.arcom.bin.Cliente;
+import ar.com.arcom.bin.Producto;
 import ar.com.arcom.handlers.EndUp;
 import ar.com.arcom.handlers.UIHelper;
+import ar.com.arcom.mysql.MySQLHelper;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -191,6 +193,16 @@ public class UI extends JFrame implements UIHelper, EndUp {
             jDialogAgregarQuitar.setVisible(true);
         }
         configuraUI(3);
+    }
+    private void modificarProducto(){
+        MySQLHelper mySQLHelper = new MySQLHelper();
+        Producto producto = mySQLHelper.obtenerProducto(id_aBaseDatos);
+        if (producto != null) {
+            JDialogModificar jDialogModificar = new JDialogModificar(producto,application);
+            jDialogModificar.setModal(true);
+            jDialogModificar.setVisible(true);
+        }
+        configuraUI(7);
     }
 
     // ----------------------------------------------------------------
@@ -554,7 +566,6 @@ public class UI extends JFrame implements UIHelper, EndUp {
             public void valueChanged(ListSelectionEvent e) {
                 id_aBaseDatos = (Integer)table.getValueAt(table.getSelectedRow(),0);
             }
-
         });
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setCellSelectionEnabled(false);
@@ -572,12 +583,77 @@ public class UI extends JFrame implements UIHelper, EndUp {
         btn_secundary_3.setText("Ver pedidos");
         btn_secundary_3.setActionCommand("cmd_ver_pedidos");
 
-        btn_primary.setText("Ver productos en su carrito");
-        btn_primary.setActionCommand("cmd_ver_carrito");
+        btn_primary.setText("Ver productos");
+        btn_primary.setActionCommand("cmd_products_admin");
 
         getContentPane().repaint();
     }
+    private void menuVerPedidos(){
+        int i = 0;
+        while (i < panel_table.getComponents().length && panel_table.getComponents()[i].getClass() != JScrollPane.class) i++;
+        if (i<panel_table.getComponents().length) panel_table.remove(scrollPane);
+        if (panel_total != null) panel_table.remove(panel_total);
+        panel_table.updateUI();
 
+        lbl_logo.setIcon(null);
+        scrollPane = new JScrollPane();
+        scrollPane.setBorder(null);
+        scrollPane.setBackground(new Color(255, 255, 255));
+        scrollPane.setOpaque(false);
+        table = new JTable();
+        table.setAutoCreateRowSorter(true);
+        table.setBorder(null);
+        table.setOpaque(false);
+        table.getTableHeader().setOpaque(false);
+        table.setGridColor(new Color(192, 192, 192));
+        table.setForeground(new Color(0, 0, 0));
+        table.setBackground(new Color(255, 255, 255));
+        table.setModel(new DefaultTableModel(
+                createListUsuarios(eventoBoton.getActionHandler().obtenerUsuarios(true)),
+                new String[]{
+                        "ID",
+                        "Usuario",
+                        "Pedidos",
+                        ""
+                }
+        ){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        });
+
+        table.getColumnModel().getColumn(0).setPreferredWidth(40);
+        table.getColumnModel().getColumn(1).setPreferredWidth(150);
+        table.getColumnModel().getColumn(2).setPreferredWidth(100);
+        table.setRowSelectionAllowed(true);
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                id_aBaseDatos = (Integer)table.getValueAt(table.getSelectedRow(),0);
+            }
+        });
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setCellSelectionEnabled(false);
+        scrollPane.setViewportView(table);
+        getContentPane().add(panel_table, BorderLayout.CENTER);
+        panel_table.add(scrollPane, BorderLayout.CENTER);
+
+        btn_secundary_1.setText("Volver");
+        btn_secundary_1.setActionCommand("cmd_inicio_administrador");
+
+        btn_secundary_2.setText("");
+        btn_secundary_2.setEnabled(false);
+        btn_secundary_2.setActionCommand("cmd_ver_compras");
+
+        btn_secundary_3.setText("Ver pedidos");
+        btn_secundary_3.setActionCommand("cmd_ver_pedidos");
+
+        btn_primary.setText("Ver productos");
+        btn_primary.setActionCommand("cmd_products_admin");
+
+        getContentPane().repaint();
+    }
 
     private Object[][] createListUsuarios(List<List<String>> usuarios) {
 
@@ -609,7 +685,7 @@ public class UI extends JFrame implements UIHelper, EndUp {
             case CLIENTE_COMPRAR -> {}
             case ADMINISTRADOR_UI -> menuPrincipalAdministrador();
             case ADMINISTRADOR_VER_PRODUCTOS -> menuVerProductosAdministrador();
-            case ADMINISTRADOR_MODIFICAR_PRODUCTO -> menuVerProductosAdministrador();
+            case ADMINISTRADOR_MODIFICAR_PRODUCTO -> modificarProducto();
             case ADMINISTRADOR_VER_USUARIOS -> menuVerUsuarios();
             default -> {}
         }
@@ -627,27 +703,45 @@ public class UI extends JFrame implements UIHelper, EndUp {
             if (i < respuesta.length()) respuesta ="0";
             return Integer.parseInt(respuesta);
         } else return 0;
-
     }
     @Override
     public void error(int valor) {
-
+        switch (valor){
+            case 3 -> JOptionPane.showMessageDialog(null, "ERROR: EL producto ya existe.");
+            case 4 -> JOptionPane.showMessageDialog(null, "ERROR: No se pudo realizar la carga.");
+            default -> {}
+        }
     }
     @Override
     public String getNombre() {
-        return null;
+        return JOptionPane.showInputDialog("Ingrese el Nombre del producto.");
     }
     @Override
     public String getDescripcion() {
-        return null;
+        return JOptionPane.showInputDialog("Ingrese la Descripcion del producto.");
     }
     @Override
     public float getPrecio() {
-        return 0;
+        String respuesta;
+        int i = 0;
+        respuesta = JOptionPane.showInputDialog("Ingrese el precio del producto.");
+        while(i < respuesta.length() &&
+                (Character.isDigit(respuesta.charAt(i)) ||
+                respuesta.charAt(i) == '.' ||
+                respuesta.charAt(i) == ',')
+        ) { i++; if (respuesta.charAt(i) == ',') respuesta = respuesta.replace(",",".");}
+        if (i < respuesta.length()) respuesta = "0";
+        return Float.parseFloat(respuesta);
     }
     @Override
     public int getStock() {
-        return 0;
+        String respuesta;
+        int i = 0;
+        respuesta = JOptionPane.showInputDialog("Ingrese el stock del producto.");
+        while(i < respuesta.length() &&
+                Character.isDigit(respuesta.charAt(i))) i++;
+        if (i < respuesta.length()) respuesta = "0";
+        return Integer.parseInt(respuesta);
     }
     @Override
     public void endUp(int valor) {

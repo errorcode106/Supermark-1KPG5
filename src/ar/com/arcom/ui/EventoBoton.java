@@ -57,7 +57,10 @@ public class EventoBoton implements ActionListener {
             case "cmd_products_admin" ->  actionHandler.configuraUI(frame, 7);
             case "cmd_inicio_administrador" -> actionHandler.configuraUI(frame, 6);
             case "cmd_edit_administrador" ->  actionHandler.configuraUI(frame, 8);
-            case "cmd_add_new_product" -> {}
+            case "cmd_add_new_product" -> actionHandler.cargarProducto(frame);
+            case "cmd_acept_edit" -> actionHandler.modificarProductoFinal(endUp);
+            case "cmd_ver_pedidos" -> actionHandler.verPedidos(frame);
+
             default -> {}
         }
     }

@@ -7,14 +7,20 @@ import java.util.Calendar;
 public class Carrito {
     private ArrayList<Articulo> articulos;
     private boolean comprado;
-    private String fechahora;
+    private int id;
 
     public Carrito(){
         articulos = new ArrayList<>();
         comprado = false;
-        fechahora = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
+        id = 0;
     }
 
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
     public boolean isComprado() {
         return comprado;
     }
@@ -75,10 +81,6 @@ public class Carrito {
         for (Articulo articulo : articulos) total += articulo.getTotal();
         return String.valueOf(total);
     }
-    public String getFechahora() {
-        return fechahora;
-    }
-
     public Articulo getArticulo(int id) {
         int i = 0;
         if (articulos.size()>0) {

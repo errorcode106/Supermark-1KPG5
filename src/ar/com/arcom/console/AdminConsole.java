@@ -38,8 +38,8 @@ public class AdminConsole implements UIHelper, EndUp {
                 case 0 -> actionHandler.cerrarSesion(this);
                 case 1 -> actionHandler.configuraUI(this,7);
                 case 2 -> actionHandler.configuraUI(this,8);
-                case 3 -> {}
-                case 4 -> {}
+                case 3 -> actionHandler.configuraUI(this,9);
+                case 4 -> actionHandler.configuraUI(this,10);
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);
@@ -55,7 +55,6 @@ public class AdminConsole implements UIHelper, EndUp {
             }
         }while (respuesta != 0);
     }
-
     public void menuModificalProductoFlujo(){
         int respuesta;
         do {
@@ -67,6 +66,17 @@ public class AdminConsole implements UIHelper, EndUp {
                 case 4 -> actionHandler.modificaDescripcion(this);
                 case 5 -> actionHandler.modificaPrecio(this);
 
+                default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
+            }
+        }while (respuesta != 0);
+    }
+    public void menuVerUsuariosFlujo(){
+        int respuesta;
+        do {
+            respuesta = menuVerUsuarios();
+            switch (respuesta){
+                case 1 -> actionHandler.configuraUI(this,7);
+                case 2 -> actionHandler.configuraUI(this,8);
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);
@@ -111,6 +121,18 @@ public class AdminConsole implements UIHelper, EndUp {
         System.out.println("----------------------------------------------------");
         return scannerInt();
     }
+    public int menuVerUsuarios(){
+        tituloMenu("Menu Ver Productos (Administrador)");
+        cargaLista(LISTA_PRODUCTOS);
+        System.out.println("Ingrese [valor] correspondiente a la opcion elegida.");
+        System.out.println("[1] Modificar Producto");
+        System.out.println("[2] Cargar producto");
+        System.out.println("");
+        System.out.println("[0] Volver");
+        System.out.println("----------------------------------------------------");
+        return scannerInt();
+    }
+
 
     // ----------------------------------------------------------------
     // Métodos generales
@@ -244,7 +266,7 @@ public class AdminConsole implements UIHelper, EndUp {
             case 6 -> menuPrincipalFlujo();
             case 7 -> menuVerProductoFlujo();
             case 8 -> menuModificalProductoFlujo();
-            case 9 -> {}
+            case 9 -> menuVerUsuariosFlujo();
             case 10 -> {}
             default -> {}
         }
@@ -299,7 +321,17 @@ public class AdminConsole implements UIHelper, EndUp {
     }
     @Override
     public void error(int valor) {
-
+        switch (valor){
+            case 3 -> {
+                System.out.println("ERROR: EL producto ya existe.");
+                System.out.println("----------------------------------------------------");
+            }
+            case 4 -> {
+                System.out.println("ERROR: No se pudo realizar la carga.");
+                System.out.println("----------------------------------------------------");
+            }
+            default -> {}
+        }
     }
     @Override
     public String getNombre() {
