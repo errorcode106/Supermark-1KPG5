@@ -171,7 +171,7 @@ public class JDialogVerPedido extends JDialog implements EndUp {
         List<String> str;
         Object[][] objects = new Object[lista.size()][6];
         for(int i = 0; i < objects.length; i++){
-            str = mySQLHelper.obtenerDatosEtiquetas(Integer.parseInt(lista.get(i).get(0)), Arrays.asList("nombre","descripcion"), "products_db");
+            str = mySQLHelper.obtenerDatos(Integer.parseInt(lista.get(i).get(0)), Arrays.asList("nombre","descripcion"), "products_db");
             objects[i] = new Object[]{
                     Integer.parseInt(lista.get(i).get(0)),
                     str.get(0),

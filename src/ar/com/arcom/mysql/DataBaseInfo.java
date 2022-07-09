@@ -1,26 +1,21 @@
 package ar.com.arcom.mysql;
 
 public class DataBaseInfo {
-    private String JDBC_DRIVER;
-    private String DB_URL;
-    private String USER;
-    private String PASSWORD;
+    private static String JDBC_DRIVER;
+    private static String DB_URL;
+    private static String USER;
+    private static String PASSWORD;
 
 // pruebas misteriosas e ilegales bsi5brxpk0wz9ygdti6z
 
-    public DataBaseInfo() {
-        //setDefaultDataBaseInfo();
-        setCustomDataBaseInfo();
-    }
-
-    private void setDefaultDataBaseInfo(){
+    public static void setDefaultDataBaseInfo(){
         JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
         DB_URL = "jdbc:mysql://ulgg0or7rymoucea:KbmgO9lZCsLyLnKgWcGa@bsi5brxpk0wz9ygdti6z-mysql.services.clever-cloud.com:3306/bsi5brxpk0wz9ygdti6z";
         USER = "ulgg0or7rymoucea";
         PASSWORD = "KbmgO9lZCsLyLnKgWcGa";
     }
 
-    private void setCustomDataBaseInfo(){
+    public static void setCustomDataBaseInfo(){
         JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
         DB_URL = "jdbc:mysql://127.0.0.1";
         USER = "root";
