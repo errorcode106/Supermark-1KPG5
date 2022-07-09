@@ -14,12 +14,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UI extends JFrame implements UIHelper, EndUp {
     public final int CLIENTE_UI = 1, ADMINISTRADOR_UI = 6;
     public final int CLIENTE_VER_CARRITOS = 3, CLIENTE_VER_PRODUCTOS = 2, CLIENTE_MODIFICAR_CARRITO = 4, CLIENTE_COMPRAR = 5;
-    public final int ADMINISTRADOR_VER_PRODUCTOS = 7, ADMINISTRADOR_MODIFICAR_PRODUCTO = 8, ADMINISTRADOR_VER_USUARIOS = 9;
+    public final int ADMINISTRADOR_VER_PRODUCTOS = 7, ADMINISTRADOR_MODIFICAR_PRODUCTO = 8, ADMINISTRADOR_VER_USUARIOS = 9,
+            ADMINISTRADOR_VER_PEDIDOS = 10, ADMINISTRADOR_VER_ORDENES = 11;
 
     private Application application;
     private EventoBoton eventoBoton;
@@ -28,6 +30,7 @@ public class UI extends JFrame implements UIHelper, EndUp {
     private JTable table;
 
     private int id, id_aBaseDatos;
+    private String fecha;
 
     private JTextPane txt_info;
     private JLabel lbl_icon,lbl_logo,lbl_total,lbl_total_precio;
@@ -203,6 +206,16 @@ public class UI extends JFrame implements UIHelper, EndUp {
             jDialogModificar.setVisible(true);
         }
         configuraUI(7);
+    }
+    private void VerOrdenes(){
+        MySQLHelper mySQLHelper = new MySQLHelper();
+        List<List<String>> lista = mySQLHelper.obtenerOrdenes(id_aBaseDatos, fecha);
+        if (lista != null && lista.size() > 0) {
+            JDialogVerPedido jDialogVerPedido= new JDialogVerPedido(fecha,lista,application);
+            jDialogVerPedido.setModal(true);
+            jDialogVerPedido.setVisible(true);
+        }
+        configuraUI(10);
     }
 
     // ----------------------------------------------------------------
@@ -588,7 +601,13 @@ public class UI extends JFrame implements UIHelper, EndUp {
 
         getContentPane().repaint();
     }
-    private void menuVerPedidos(){
+    private void verPedidos(){
+        MySQLHelper mySQLHelper = new MySQLHelper();
+        List<List<String>> lista = mySQLHelper.obtenerPedidos(id_aBaseDatos);
+        if (lista != null && lista.size()>0) menuVerPedidos(lista);
+        else configuraUI(9);
+    }
+    private void menuVerPedidos(List<List<String>> lista){
         int i = 0;
         while (i < panel_table.getComponents().length && panel_table.getComponents()[i].getClass() != JScrollPane.class) i++;
         if (i<panel_table.getComponents().length) panel_table.remove(scrollPane);
@@ -609,12 +628,11 @@ public class UI extends JFrame implements UIHelper, EndUp {
         table.setForeground(new Color(0, 0, 0));
         table.setBackground(new Color(255, 255, 255));
         table.setModel(new DefaultTableModel(
-                createListUsuarios(eventoBoton.getActionHandler().obtenerUsuarios(true)),
+                createListPedidos(lista),
                 new String[]{
                         "ID",
                         "Usuario",
-                        "Pedidos",
-                        ""
+                        "Pedidos"
                 }
         ){
             @Override
@@ -631,6 +649,7 @@ public class UI extends JFrame implements UIHelper, EndUp {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 id_aBaseDatos = (Integer)table.getValueAt(table.getSelectedRow(),0);
+                fecha = String.valueOf(table.getValueAt(table.getSelectedRow(),2));
             }
         });
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -646,8 +665,8 @@ public class UI extends JFrame implements UIHelper, EndUp {
         btn_secundary_2.setEnabled(false);
         btn_secundary_2.setActionCommand("cmd_ver_compras");
 
-        btn_secundary_3.setText("Ver pedidos");
-        btn_secundary_3.setActionCommand("cmd_ver_pedidos");
+        btn_secundary_3.setText("Ver detalles");
+        btn_secundary_3.setActionCommand("cmd_ver_detalles");
 
         btn_primary.setText("Ver productos");
         btn_primary.setActionCommand("cmd_products_admin");
@@ -656,7 +675,6 @@ public class UI extends JFrame implements UIHelper, EndUp {
     }
 
     private Object[][] createListUsuarios(List<List<String>> usuarios) {
-
         Object[][] objects = new Object[usuarios.size()][3];
 
         for(int i = 0; i < objects.length; i++){
@@ -664,6 +682,17 @@ public class UI extends JFrame implements UIHelper, EndUp {
                     Integer.parseInt(usuarios.get(i).get(0)),
                     usuarios.get(i).get(1),
                     true,
+            };
+        }
+        return objects;
+    }
+    private Object[][] createListPedidos(List<List<String>> lista) {
+        Object[][] objects = new Object[lista.size()][3];
+        for(int i = 0; i < objects.length; i++){
+            objects[i] = new Object[]{
+                    Integer.parseInt(lista.get(i).get(0)),
+                    lista.get(i).get(1),
+                    lista.get(i).get(2),
             };
         }
         return objects;
@@ -687,6 +716,8 @@ public class UI extends JFrame implements UIHelper, EndUp {
             case ADMINISTRADOR_VER_PRODUCTOS -> menuVerProductosAdministrador();
             case ADMINISTRADOR_MODIFICAR_PRODUCTO -> modificarProducto();
             case ADMINISTRADOR_VER_USUARIOS -> menuVerUsuarios();
+            case ADMINISTRADOR_VER_PEDIDOS -> verPedidos();
+            case ADMINISTRADOR_VER_ORDENES -> VerOrdenes();
             default -> {}
         }
     }

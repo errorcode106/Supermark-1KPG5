@@ -1,7 +1,6 @@
 package ar.com.arcom.ui;
 
 import ar.com.arcom.Application;
-import ar.com.arcom.bin.Producto;
 import ar.com.arcom.handlers.EndUp;
 import ar.com.arcom.mysql.MySQLHelper;
 
@@ -9,20 +8,23 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.List;
 
 public class JDialogVerPedido extends JDialog implements EndUp {
     private EventoBoton eventoBoton;
     private Application application;
     private final JPanel contentPane;
-    private JTextField textField, jtf_nombre, jtf_descripcion, jtf_precio, jtf_stock;
+    private JTextField textField;
     private JTable table;
-    private Producto producto, productoAux;
+    private List<List<String>> lista;
+    private String fecha;
 
-    public JDialogVerPedido(List<List<String>> lista, Application application) {
+    public JDialogVerPedido(String fecha, List<List<String>> lista, Application application) {
         this.eventoBoton = new EventoBoton(application, this);
-        this.producto = producto;
         this.application = application;
+        this.lista = lista;
+        this.fecha = fecha;
 
         setSize( 560, 473);
         setResizable(true);
@@ -50,7 +52,11 @@ public class JDialogVerPedido extends JDialog implements EndUp {
         contentPane.add(panel, BorderLayout.NORTH);
         panel.setLayout(new GridLayout(2, 0, 0, 0));
 
-        JLabel lblId = new JLabel("Cliente");
+        MySQLHelper mySQLHelper = new MySQLHelper();
+        List<String> aux = mySQLHelper.obtenerIdPorFecha(fecha);
+        List<String> datos = mySQLHelper.obtenerDatos(Integer.parseInt(aux.get(1)), List.of("user"),"users_db");
+
+        JLabel lblId = new JLabel(datos.get(0).toUpperCase());
         lblId.setBackground(new Color(24, 119, 242));
         lblId.setOpaque(true);
         lblId.setForeground(Color.WHITE);
@@ -67,7 +73,7 @@ public class JDialogVerPedido extends JDialog implements EndUp {
 
         textField = new JTextField();
         textField.setBorder(null);
-        textField.setText("0");
+        textField.setText(aux.get(0));
         textField.setOpaque(false);
         textField.setHorizontalAlignment(SwingConstants.LEFT);
         textField.setEditable(false);
@@ -79,7 +85,7 @@ public class JDialogVerPedido extends JDialog implements EndUp {
 
         JTextField jtf_fecha = new JTextField();
         jtf_fecha.setBorder(null);
-        jtf_fecha.setText("2022/07/07 22:22:22 ");
+        jtf_fecha.setText(fecha + " ");
         jtf_fecha.setOpaque(false);
         jtf_fecha.setHorizontalAlignment(SwingConstants.LEFT);
         jtf_fecha.setEditable(false);
@@ -95,8 +101,8 @@ public class JDialogVerPedido extends JDialog implements EndUp {
         btn_aceptar.setMaximumSize(new Dimension(84, 70));
         btn_aceptar.setPreferredSize(new Dimension(84, 50));
         btn_aceptar.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btn_aceptar.setActionCommand("cmd_products");
-        //btn_aceptar.addActionListener(eventoBoton);
+        btn_aceptar.setActionCommand("cmd_cancel");
+        btn_aceptar.addActionListener(eventoBoton);
         btn_aceptar.setFont(new Font("Dialog", Font.PLAIN, 20));
         btn_aceptar.setBorder(null);
         btn_aceptar.setForeground(Color.WHITE);
@@ -113,9 +119,7 @@ public class JDialogVerPedido extends JDialog implements EndUp {
         table = new JTable();
 
         table.setModel(new DefaultTableModel(
-                new Object[][] {
-                        {null, null, null, null, null, null},
-                },
+                createListOrdenes(lista),
                 new String[] {
                         "ID",
                         "NOMBRE",
@@ -151,7 +155,9 @@ public class JDialogVerPedido extends JDialog implements EndUp {
         lblNewLabel.setFont(new Font("Dialog", Font.BOLD, 16));
         panel_1.add(lblNewLabel);
 
-        JLabel lblNewLabel_1 = new JLabel("$555,75 ");
+        float total = 0;
+        for (List<String> stringList: lista) total += Integer.parseInt(stringList.get(1))*Float.parseFloat(stringList.get(2));
+        JLabel lblNewLabel_1 = new JLabel("$" + total + " ");
         lblNewLabel_1.setFont(new Font("Dialog", Font.BOLD, 16));
         lblNewLabel_1.setHorizontalAlignment(SwingConstants.RIGHT);
         panel_1.add(lblNewLabel_1);
@@ -160,6 +166,23 @@ public class JDialogVerPedido extends JDialog implements EndUp {
         panel_table.add(panel_2, BorderLayout.NORTH);
         panel_2.setLayout(new GridLayout(2, 0, 0, 0));
     }
+    private Object[][] createListOrdenes(List<List<String>> lista) {
+        MySQLHelper mySQLHelper = new MySQLHelper();
+        List<String> str;
+        Object[][] objects = new Object[lista.size()][6];
+        for(int i = 0; i < objects.length; i++){
+            str = mySQLHelper.obtenerDatosEtiquetas(Integer.parseInt(lista.get(i).get(0)), Arrays.asList("nombre","descripcion"), "products_db");
+            objects[i] = new Object[]{
+                    Integer.parseInt(lista.get(i).get(0)),
+                    str.get(0),
+                    str.get(1),
+                    lista.get(i).get(2),
+                    lista.get(i).get(1),
+                    Integer.parseInt(lista.get(i).get(1))*Float.parseFloat(lista.get(i).get(2))
+            };
+        }
+        return objects;
+    }
 
     @Override
     public void endUp(int valor) {
@@ -167,7 +190,9 @@ public class JDialogVerPedido extends JDialog implements EndUp {
             case 0 -> {
                 dispose();
             }
-            case 1 -> {}
+            case 1 -> {
+
+            }
             case 2 -> {}
             case 3 -> {}
             default -> {}

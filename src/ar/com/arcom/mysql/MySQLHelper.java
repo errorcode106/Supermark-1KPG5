@@ -474,7 +474,7 @@ public class MySQLHelper {
             try {
                 statement = connection.createStatement();
                 String sql;
-                sql = "INSERT INTO bsi5brxpk0wz9ygdti6z.order_db (id,product_id,shoping_cart_id,amount,price) VALUES(0, "
+                sql = "INSERT INTO bsi5brxpk0wz9ygdti6z.order_db (id,product_id,shopping_cart_id,amount,price) VALUES(0, "
                         + idProducto + ", "
                         + idPedido + ", "
                         + cantidad + ", "
@@ -673,7 +673,7 @@ public class MySQLHelper {
         clean();
     }
     public Producto obtenerProducto(int id) {
-         Producto producto = null;
+        Producto producto = null;
         openConection();
         if (openConnection){
             try {
@@ -692,5 +692,107 @@ public class MySQLHelper {
         }
         clean();
         return producto;
+    }
+
+    public List<List<String>> obtenerPedidos(int id) {
+        List<List<String>> lista = new ArrayList<>();
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.shopping_cart_db WHERE " + "client_id" + " = " + "'" + id + "'";
+                resultSet = statement.executeQuery(sql);
+
+                List<String> labels = Arrays.asList("id","client_id","date");
+                while (resultSet.next()){
+                    List<String> aux = new ArrayList<>();
+                    for (String label : labels) aux.add(resultSet.getString(label));
+                    lista.add(aux);
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+        return lista;
+    }
+    public List<List<String>> obtenerOrdenes(int id, String fecha) {
+        List<List<String>> lista = new ArrayList<>();
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.order_db WHERE " + "shopping_cart_id" + " = " + "'" + id + "'";
+                resultSet = statement.executeQuery(sql);
+
+                List<String> labels = Arrays.asList("product_id","amount","price");
+                while (resultSet.next()){
+                    List<String> aux = new ArrayList<>();
+                    for (String label : labels) aux.add(resultSet.getString(label));
+                    lista.add(aux);
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+        return lista;
+    }
+
+    public List<String> obtenerDatosEtiquetas(int id, List<String> labels, String baseDatos) {
+        List<String> aux = new ArrayList<>();
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z." + baseDatos;
+                resultSet = statement.executeQuery(sql);
+                if(resultSet.next()) {
+                    for(String str : labels) aux.add(resultSet.getString(str));
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+        return aux;
+    }
+    public List<String> obtenerDatos(int id, List<String> labels, String baseDatos) {
+        List<String> aux = new ArrayList<>();
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z."+baseDatos+" WHERE " + "id" + " = " + "'" + id + "'";
+                resultSet = statement.executeQuery(sql);
+                if(resultSet.next()) for (String label: labels) aux.add(resultSet.getString(label));
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+        return aux;
+    }
+    public List<String> obtenerIdPorFecha(String fecha) {
+        List<String> aux = new ArrayList<>();
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.shopping_cart_db WHERE " + "date" + " = " + "'" + fecha + "'";
+                resultSet = statement.executeQuery(sql);
+                List<String> labels = Arrays.asList("id","client_id");
+                if(resultSet.next()) for (String label: labels) aux.add(resultSet.getString(label));
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+        return aux;
     }
 }

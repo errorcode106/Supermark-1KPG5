@@ -46,14 +46,14 @@ public class JDialogLogin extends JDialog implements Login {
 
         jtf_user = new JTextField();
         //jtf_user.setBorder(null);
-        jtf_user.setText("flavio");
+        jtf_user.setText("admin");
         jtf_user.setBounds(10, 16, 225, 25);
         jtf_user.setColumns(10);
         panel.add(jtf_user);
 
         jtf_password = new JPasswordField();
         //jtf_password.setBorder(null);
-        jtf_password.setText("123456");
+        jtf_password.setText("admin");
         jtf_password.setBounds(10, 43, 225, 25);
         panel.add(jtf_password);
 

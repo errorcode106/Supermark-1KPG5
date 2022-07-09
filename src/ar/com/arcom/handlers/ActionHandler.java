@@ -3,6 +3,7 @@ package ar.com.arcom.handlers;
 import ar.com.arcom.Application;
 import ar.com.arcom.bin.*;
 import ar.com.arcom.mysql.MySQLHelper;
+import ar.com.arcom.ui.UI;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -233,6 +234,7 @@ public class ActionHandler {
     public void dispose(EndUp endUp) {
         endUp.endUp(0);
     }
+
     public void modificaNombre(UIHelper uiHelper) {
         int id = uiHelper.getID("modificar",true);
         mySQLHelper.modificaNombre(id,uiHelper.getNombre());
@@ -245,12 +247,13 @@ public class ActionHandler {
         int id = uiHelper.getID("modificar",true);
         mySQLHelper.modificaPrecio(id,String.valueOf(uiHelper.getPrecio()));
     }
-
     public void modificarProductoFinal(EndUp endUp) {
         endUp.endUp(1);
     }
-
     public void verPedidos(UIHelper uiHelper) {
         uiHelper.configuraUI(10);
+    }
+    public void verOrdenes(UIHelper uiHelper) {
+        uiHelper.configuraUI(11);
     }
 }

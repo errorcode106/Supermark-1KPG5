@@ -60,7 +60,7 @@ public class EventoBoton implements ActionListener {
             case "cmd_add_new_product" -> actionHandler.cargarProducto(frame);
             case "cmd_acept_edit" -> actionHandler.modificarProductoFinal(endUp);
             case "cmd_ver_pedidos" -> actionHandler.verPedidos(frame);
-
+            case "cmd_ver_detalles" -> actionHandler.verOrdenes(frame);
             default -> {}
         }
     }
