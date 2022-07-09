@@ -5,7 +5,9 @@ import ar.com.arcom.bin.Cliente;
 import ar.com.arcom.handlers.ActionHandler;
 import ar.com.arcom.handlers.EndUp;
 import ar.com.arcom.handlers.UIHelper;
+import ar.com.arcom.mysql.MySQLHelper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -14,17 +16,21 @@ public class AdminConsole implements UIHelper, EndUp {
     // ----------------------------------------------------------------
     // Atributos
     // ----------------------------------------------------------------
-    public final static int LISTA_PRODUCTOS = 0;
+    public final static int LISTA_PRODUCTOS = 0, LISTA_USUARIOS = 1, LISTA_PEDIDOS = 2, LISTA_ORDENES = 3;
 
     private Application application;
     private ActionHandler actionHandler;
-
+    private int id, id_pedido;
+    private String fecha;
     // ----------------------------------------------------------------
     // Constructor
     // ----------------------------------------------------------------
     public AdminConsole(Application application, ActionHandler actionHandler) {
         this.application = application;
         this.actionHandler = actionHandler;
+        id = 0;
+        id_pedido = 0;
+        fecha = null;
     }
 
     // ----------------------------------------------------------------
@@ -39,7 +45,6 @@ public class AdminConsole implements UIHelper, EndUp {
                 case 1 -> actionHandler.configuraUI(this,7);
                 case 2 -> actionHandler.configuraUI(this,8);
                 case 3 -> actionHandler.configuraUI(this,9);
-                case 4 -> actionHandler.configuraUI(this,10);
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);
@@ -75,11 +80,106 @@ public class AdminConsole implements UIHelper, EndUp {
         do {
             respuesta = menuVerUsuarios();
             switch (respuesta){
-                case 1 -> actionHandler.configuraUI(this,7);
-                case 2 -> actionHandler.configuraUI(this,8);
+                case 1 -> verPedidos();
                 default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
             }
         }while (respuesta != 0);
+    }
+    public void menuVerPedidosFlujo(){
+        int respuesta;
+        do {
+            respuesta = menuVerPedidos();
+            switch (respuesta){
+                case 1 -> verOrdenes();
+                default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
+            }
+        }while (respuesta != 0);
+    }
+    public void menuVerOrdenesFlujo(){
+        int respuesta;
+        do {
+            respuesta = menuVerOrdenes();
+            switch (respuesta){
+                case 0 -> {}
+                case 1 -> verOrdenes();
+                default -> {System.out.println("ERROR: Ingrese un [valor] valido.");}
+            }
+        }while (respuesta != 0);
+    }
+
+    private void verPedidos(){
+        id = getIdUsuario("revisar", true);
+        configuraUI(10);
+    }
+    private void verOrdenes(){
+        MySQLHelper mySQLHelper = new MySQLHelper();
+        id_pedido = getIdPedido("revisar", true);
+        fecha = mySQLHelper.obtenerFechaPorIdPedido(id_pedido);
+        List<String> lista = mySQLHelper.obtenerIdPorFecha(fecha);
+        id = Integer.parseInt(lista.get(1));
+
+        configuraUI(11);
+    }
+
+    public int getIdUsuario(String valor, boolean aDeBaseDatos) {
+        boolean aux = false;
+        int id = -1;
+        do{
+            System.out.println("----------------------------------------------------");
+            System.out.println("Ingrese el ID del usuario a " + valor + " o ingrese 0 para cancelar.");
+
+            String str;
+            int i;
+            i = 0;
+            Scanner scanner = new Scanner(System.in);
+            str = scanner.next();
+            while(i < str.length() && Character.isDigit(str.charAt(i))) i++;
+            if (i < str.length()) {
+                str ="-1";
+                System.out.println("----------------------------------------------------");
+                System.out.println("-------->El valor ingresado es incorrecto <---------");
+            }
+            else {
+                id = Integer.parseInt(str);
+                if(verificaID(id, aDeBaseDatos)) aux = true;
+                if (!aux) {
+                    System.out.println("----------------------------------------------------");
+                    System.out.println("-------->El valor ingresado es incorrecto <---------");
+                }
+            }
+        }while (!aux && id != 0 );
+
+        return id;
+    }
+    public int getIdPedido(String valor, boolean aDeBaseDatos) {
+        boolean aux = false;
+        int id = -1;
+        do{
+            System.out.println("----------------------------------------------------");
+            System.out.println("Ingrese el ID del pedido a " + valor + " o ingrese 0 para cancelar.");
+
+            String str;
+            int i;
+            i = 0;
+            Scanner scanner = new Scanner(System.in);
+            str = scanner.next();
+            while(i < str.length() && Character.isDigit(str.charAt(i))) i++;
+            if (i < str.length()) {
+                str ="-1";
+                System.out.println("----------------------------------------------------");
+                System.out.println("-------->El valor ingresado es incorrecto! <---------");
+            }
+            else {
+                id = Integer.parseInt(str);
+                if(verificaIDPedido(id, aDeBaseDatos)) aux = true;
+                if (!aux) {
+                    System.out.println("----------------------------------------------------");
+                    System.out.println("-------->El valor ingresado es incorrecto <---------");
+                }
+            }
+        }while (!aux && id != 0 );
+
+        return id;
     }
     // ----------------------------------------------------------------
     // Métodos de opciones
@@ -122,17 +222,34 @@ public class AdminConsole implements UIHelper, EndUp {
         return scannerInt();
     }
     public int menuVerUsuarios(){
-        tituloMenu("Menu Ver Productos (Administrador)");
-        cargaLista(LISTA_PRODUCTOS);
+        tituloMenu("Menu Ver Usuarios con Compras (Administrador)");
+        cargaLista(LISTA_USUARIOS);
         System.out.println("Ingrese [valor] correspondiente a la opcion elegida.");
-        System.out.println("[1] Modificar Producto");
-        System.out.println("[2] Cargar producto");
+        System.out.println("[1] Ver Pedidos");
         System.out.println("");
         System.out.println("[0] Volver");
         System.out.println("----------------------------------------------------");
         return scannerInt();
     }
-
+    public int menuVerPedidos(){
+        tituloMenu("Menu Ver Pedidos de Usuario (Administrador)");
+        cargaLista(LISTA_PEDIDOS);
+        System.out.println("Ingrese [valor] correspondiente a la opcion elegida.");
+        System.out.println("[1] Ver ordenes");
+        System.out.println("");
+        System.out.println("[0] Volver");
+        System.out.println("----------------------------------------------------");
+        return scannerInt();
+    }
+    public int menuVerOrdenes(){
+        tituloMenu("Menu Ver Ordenes de Pedido (Administrador)");
+        cargaLista(LISTA_ORDENES);
+        System.out.println("Ingrese [valor] correspondiente a la opcion elegida.");
+        System.out.println("");
+        System.out.println("[0] Volver");
+        System.out.println("----------------------------------------------------");
+        return scannerInt();
+    }
 
     // ----------------------------------------------------------------
     // Métodos generales
@@ -169,11 +286,19 @@ public class AdminConsole implements UIHelper, EndUp {
     }
     private boolean verificaID(int id, boolean aDeBaseDatos) {
        if (application.getUsuario().getType() == 0) {
-           if (aDeBaseDatos) return actionHandler.consultaSiExiste(id);
+           if (aDeBaseDatos) return actionHandler.consultaSiExiste(id,"products_db");
            else return ((Cliente) application.getUsuario()).getCarrito().consultaSiExisteID(id);
        } else {
-           return actionHandler.consultaSiExiste(id);
+           return actionHandler.consultaSiExiste(id, "products_db");
        }
+    }
+    private boolean verificaIDPedido(int id, boolean aDeBaseDatos) {
+        if (application.getUsuario().getType() == 0) {
+            if (aDeBaseDatos) return actionHandler.consultaSiExiste(id,"products_db");
+            else return ((Cliente) application.getUsuario()).getCarrito().consultaSiExisteID(id);
+        } else {
+            return actionHandler.consultaSiExiste(id,"shopping_cart_db");
+        }
     }
     private void tituloMenu(String cadena){
         System.out.println("----------------------------------------------------");
@@ -219,16 +344,18 @@ public class AdminConsole implements UIHelper, EndUp {
         }
 
         if (necesitaTotal) {
-            if (((Cliente)(application.getUsuario())).getCarrito().getArticulos() != null){
+            if (lista.size()>0){
                 int aux = 0;
                 for (int i = 0; i < mayorPeso.length; i++) aux += mayorPeso[i]+3;
-                aux -= (3 + 7 + String.valueOf(((Cliente)(application.getUsuario())).getCarrito().getTotales()).length());
+                float cnt = 0;
+                for (List<String> cadena : lista) cnt += Float.parseFloat(cadena.get(cadena.size()-1));
+                aux -= (3 + 7 + String.valueOf(cnt).length());
 
                 Arrays.fill(separador, "");
                 for (int i = 0; i < aux; i++) separador[0] += " ";
 
                 System.out.println(separador[0] + "Total: "
-                        + ((Cliente)(application.getUsuario())).getCarrito().getTotales());
+                        + cnt);
             } else {
                 System.out.println(separador[0] + "Total: "
                         + 0.0);
@@ -244,9 +371,39 @@ public class AdminConsole implements UIHelper, EndUp {
                 System.out.println("----------------------------------------------------");
             }
             case 1 -> {
-                System.out.println("Lista de ...");
-                tablaFix(new String[]{"ID","Producto","Descripcion","Precio","Cantidad", "Sub Total"},
-                        actionHandler.obtenerArticulos(((Cliente)(application.getUsuario())).getCarrito().getArticulos()),
+                System.out.println("Lista de usuarios con compras");
+                List<List<String>> listList = actionHandler.obtenerUsuarios(true);
+                for (List<String> lista : listList) lista.add("true");
+                tablaFix(new String[]{"ID","Usuario","Pedidos"},
+                        listList,
+                        false);
+                System.out.println("----------------------------------------------------");
+            }
+            case 2 -> {
+                System.out.println("Lista de Pedidos de Usuario");
+                MySQLHelper mySQLHelper = new MySQLHelper();
+                List<List<String>> listList = mySQLHelper.obtenerPedidos(id);
+                tablaFix(new String[]{"ID Pedido", "ID Usuario", "Fecha"},
+                        listList,
+                        false);
+                System.out.println("----------------------------------------------------");
+            }
+            case 3 -> {
+                System.out.println("Lista de Ordenes del Pedido");
+                MySQLHelper mySQLHelper = new MySQLHelper();
+                List<List<String>> listList = mySQLHelper.obtenerOrdenes(id_pedido, fecha);
+                //"product_id","amount","price"
+                for(int i = 0; i < listList.size(); i++) listList.get(i).addAll(1,
+                        mySQLHelper.obtenerDatosEtiquetas(
+                                Integer.parseInt(listList.get(i).get(0)),
+                                Arrays.asList("nombre","descripcion"),
+                                "products_db")
+                );
+                for (List<String> lista : listList) lista.add(
+                        String.valueOf(Integer.parseInt(lista.get(3))*Float.parseFloat(lista.get(4))
+                ));
+                tablaFix(new String[]{"ID","Producto","Descripcion","Cantidad","Precio", "SubTotal"},
+                        listList,
                         true);
                 System.out.println("----------------------------------------------------");
             }
@@ -267,7 +424,8 @@ public class AdminConsole implements UIHelper, EndUp {
             case 7 -> menuVerProductoFlujo();
             case 8 -> menuModificalProductoFlujo();
             case 9 -> menuVerUsuariosFlujo();
-            case 10 -> {}
+            case 10 -> menuVerPedidosFlujo();
+            case 11 -> menuVerOrdenesFlujo();
             default -> {}
         }
     }
@@ -373,7 +531,6 @@ public class AdminConsole implements UIHelper, EndUp {
         stock = scanner.nextInt();
         return stock;
     }
-
     @Override
     public void endUp(int valor) {
 

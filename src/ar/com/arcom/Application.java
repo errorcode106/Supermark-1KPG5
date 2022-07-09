@@ -31,31 +31,24 @@ public class Application {
             }
         }
     }
-
     public Usuario getUsuario() {
         return usuario;
     }
-
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-
     public InterfaceConsole getConsoleInterface() {
         return consoleInterface;
     }
-
     public void setConsoleInterface(InterfaceConsole consoleInterface) {
         this.consoleInterface = consoleInterface;
     }
-
     public UI getUi() {
         return ui;
     }
-
     public void setUi(UI ui) {
         this.ui = ui;
     }
-
     public static void main(String[] arg){
         Application application = new Application();
         application.play();

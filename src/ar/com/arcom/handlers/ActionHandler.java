@@ -173,8 +173,8 @@ public class ActionHandler {
     public boolean consultaStock(int id, int cantidad) {
         return mySQLHelper.consultaStock(id, cantidad);
     }
-    public boolean consultaSiExiste(int id){
-        return mySQLHelper.consultaSiExiste(id);
+    public boolean consultaSiExiste(int id, String baseDatos ){
+        return mySQLHelper.consultaSiExiste(id, baseDatos);
     }
 
     // ----------------------------------------------------------------

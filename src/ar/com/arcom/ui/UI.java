@@ -630,9 +630,9 @@ public class UI extends JFrame implements UIHelper, EndUp {
         table.setModel(new DefaultTableModel(
                 createListPedidos(lista),
                 new String[]{
-                        "ID",
-                        "Usuario",
-                        "Pedidos"
+                        "ID Pedido",
+                        "ID Usuario",
+                        "Fecha"
                 }
         ){
             @Override

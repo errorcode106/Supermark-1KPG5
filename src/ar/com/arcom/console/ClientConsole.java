@@ -157,7 +157,7 @@ public class ClientConsole implements UIHelper, EndUp {
         else return ((Cliente)(application.getUsuario())).getCarrito().verificaCantidad(id,cantidad);
     }
     private boolean verificaID(int id, boolean aDeBaseDatos) {
-        if (aDeBaseDatos) return actionHandler.consultaSiExiste(id);
+        if (aDeBaseDatos) return actionHandler.consultaSiExiste(id,"products_db");
         else return ((Cliente) application.getUsuario()).getCarrito().consultaSiExisteID(id);
     }
 

@@ -307,14 +307,14 @@ public class MySQLHelper {
         clean();
         return aux;
     }
-    public boolean consultaSiExiste(int id) {
+    public boolean consultaSiExiste(int id,String baseDatos) {
         boolean aux = false;
         openConection();
         if (openConnection){
             try {
                 statement = connection.createStatement();
                 String sql;
-                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.products_db WHERE " + "id" + " = " + "'" + id + "'";
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z." + baseDatos + " WHERE " + "id" + " = " + "'" + id + "'";
                 resultSet = statement.executeQuery(sql);
                 aux = resultSet.next();
             } catch (SQLException e) {
@@ -788,6 +788,24 @@ public class MySQLHelper {
                 resultSet = statement.executeQuery(sql);
                 List<String> labels = Arrays.asList("id","client_id");
                 if(resultSet.next()) for (String label: labels) aux.add(resultSet.getString(label));
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
+        clean();
+        return aux;
+    }
+
+    public String obtenerFechaPorIdPedido(int id) {
+        String aux = null;
+        openConection();
+        if (openConnection){
+            try {
+                statement = connection.createStatement();
+                String sql;
+                sql = "SELECT * FROM bsi5brxpk0wz9ygdti6z.shopping_cart_db WHERE " + "id" + " = " + id;
+                resultSet = statement.executeQuery(sql);
+                if(resultSet.next()) aux = resultSet.getString("date");
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(null, e.getMessage());
             }
