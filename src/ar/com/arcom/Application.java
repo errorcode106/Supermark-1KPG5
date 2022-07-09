@@ -14,7 +14,11 @@ public class Application {
     private UI ui;
 
     public void play(){
-        JOptionPane.showMessageDialog(null,"Proyecto hecho por ");
+        JOptionPane.showMessageDialog(null,"PROYECTO REALIZADO POR:\n"+ "Martínez Cruz, Flavio G.\n" +
+                "Martinez, DanteAlberto.\n" +
+                "Karanicolas,Tatiana Gisel.\n" +
+                "Ortega, Janet Judith Guadalupe.\n" +
+                "Vidaurre, José Luis.\n");
 
         int seleccion = JOptionPane.showOptionDialog( null,"¿Qué versión de SuperMark desea?",
                 TITULO,JOptionPane.YES_NO_CANCEL_OPTION,
