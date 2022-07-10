@@ -1,0 +1,379 @@
+id,Nombre,Biblioteca de figuras,ID de página,Contenido por,Grupo,Origen de línea,Destino de la línea,Flecha de origen,Flecha de destino,Estado,Área de texto 1,Área de texto 2,Área de texto 3
+1,Documento,,,,,,,,,BORRADOR,SuperMark,,
+2,Página,,,,,,,,,,Clase UML,,
+3,Texto,Estándar,2,,49,,,,,,SuperMark,,
+4,Texto,Estándar,2,,49,,,,,,"[Grupo: Gaby, Taty, Dante, José, Flavio]  |  [18/06/2022]",,
+5,Clase,UML,2,,,,,,,,Application,"​+ TITULO = ""SuperMark v0.20220709"" : final String
+- usuario : Usuario
+- consoleInterface : InterfaceConsole
+- ui : UI","​+ play() : void
++ getUsuario() : Usuario
++ setUsuario( usuario : Usuario) : void
++ getConsoleInterface() : InterfaceConsole
++ setConsoleInterface(consoleInterface : InterfaceConsole) : void
++ getUi() : UI
+"
+6,Clase,UML,2,,,,,,,,<< Usuario >>," - usuario : String
+ - contrase a : String
+ - type : int"," + setType(type : int) : void
+ + getNombre() : String
+ + setUsuario(usuario : String) : void
+ + getType() : int"
+7,Clase,UML,2,,,,,,,,Cliente, - carrito : Carrito," + getCarrito() : Carrito
+ + agregar() : void"
+8,Clase,UML,2,,,,,,,,Administrador,," + cargarProducto(producto : Producto) : void
+ + modificarProducto() : void
+ + verListado(cliente : Cliente) : Carrito
+ + verUsuariosQueCompraron() : ArrayList<String>"
+9,Clase,UML,2,,,,,,,,Producto," - id : int 
+ - nombre : String 
+ - descripcion : String 
+ - precio : float 
+ - stock : int "," + getId() : int
+ + setId(int id) : void
+ + getNombre() : String
+ + setNombre(nombre : String) : void 
+ + getPrecio() : float 
+ + setPrecio(precio : float) : void
+ + getStock() : int
+ + setStock(int stock) : void
+ + getDescripcion() : String
+ + setDescripcion(descripcion : String) : void
+ + a adirStock(ingreso : int) : boolean
+ + validarStock() : boolean
+ + quitarStock(unidades : int) : void
+ + set(label : String,labelData : String) : void"
+10,Clase,UML,2,,,,,,,,Articulo," - id : int
+ - nombre : String
+ - descripcion : String
+ - precio : float
+ - cantidad : int
+ - total : float"," + calculaTotal() : double
+ + getId() : int
+ + setId(id : int ) : void
+ + getNombre() : String
+ + setNombre(nombre : String) : void 
+ + getDescripcion() : String
+ + setDescripcion(descripcion : String ) : void 
+ + getPrecio() : float 
+ + setPrecio(precio : float) : void 
+ + getCantidad() : int 
+ + setCantidad(int cantidad) : void 
+ + getTotal() : float 
+ + a adir(cantidad : int) : void 
+ + restar(cantidad : int) : void"
+11,Clase,UML,2,,,,,,,,Carrito," - articulos : ArrayList<Articulo> 
+ - comprado : boolean 
+ - id : int "," + getId() : int 
+ + setId(int id) : void 
+ + isComprado() : boolean 
+ + setComprado(boolean comprado) : void 
+ + getArticulos() : ArrayList<Articulo> 
+ + setArticulos(articulos : ArrayList<Articulo>) : void
+ + a adirArticulo(articulo : Articulo) : void
+ + eliminar(id : int,cantidad : int) : void 
+ + agregaCantidad(id : int, cantidad : int) : void
+ + verificaCantidad(id : int,cantidad : int) : boolean 
+ + quitarCantidad(id : int ,cantidad : int) : void
+ + consultaSiExisteID(id : int) : boolean 
+ + recalcularTotales() : void
+ + getTotales() : String 
+ + getArticulo(id : int) : int"
+12,Clase,UML,2,,,,,,,,MySQLHelper," - connection : Connection
+ - statement : Statement
+ - resultSet : ResultSet
+ - dataBaseInfo : DataBaseInfo
+ - openConnection : boolean"," - openConection() : void
+ - clean() : void
+ + existeElUsuario(String user) : boolean
+ + compararUsuarioContrasenia(String user, String password) : boolean
+ + getType(String user) : int
+ + agregaUsuario(String user, String password) : int
+ - simpleQuery(String label, String dataLabel, String dataType) : String
+ - SimpleQueryCompare(String label, String dataLabel) : boolean
+ - runQueryCompare(String labelA, String labelB, String dataLabelA, String dataLabelB) : boolean
+ - extractDataProductos(String label, String dataType) : String
+ + obtenerProductos(boolean con_existencias) : List<List<String>>
+ - dameProducto(boolean con_existencias) : List<List<String>>
+ - extractDataProductos(boolean con_existencias, List<String> labels) : List<List<String>>
+ + quitaStock(int id, int cantidad) : void
+ + obtenerArticulos(List<Articulo> lista) : List<List<String>>
+ - dameArticulo(int id, List<String> labels) : List<String> 
+ + agregarStock(int id, int cantidad) : void
+ + consultaStock(int id, int cantidad) : boolean
+ + consultaSiExiste(int id,String baseDatos) : boolean
+ + crearArticulo(int id, int cantidad) : Articulo
+ + cargarProducto(Producto producto) : boolean
+ + consultaSiExisteNombre(String nombre) : boolean
+ + buscaPorNombre(String nombre) : int
+ + comprarListaArticulos(String nombre, List<Articulo> lista) : boolean
+ - agregarPedido(String usuario) : int
+ - getId(String dataBase, String label, String labelData) : int
+ - agregaOrden(int idPedido,int idProducto, int cantidad, float precio) : boolean
+ - verificaDatos(List<Articulo> lista) : boolean
+ + obtenerUsuarios(boolean soloConPedidos) : List<List<String>>
+ - extractDataUsers(List<String> labels) : List<List<String>>
+ - extractData(List<String> labels) : List<List<String>>
+ + modificaNombre(int id, String nombre) : void
+ + modificaDescripcion(int id, String descripcion) : void
+ + modificaPrecio(int id, String precio) : void
+ + modificaStock(int id, String stock) : void
+ + obtenerProducto(int id) : Producto
+ + obtenerPedidos(int id) : List<List<String>>
+ + obtenerOrdenes(int id, String fecha) : List<List<String>>
+ + obtenerDatosEtiquetas(int id, List<String> labels, String baseDatos) : List<String>
+ + obtenerDatos(int id, List<String> labels, String baseDatos) : List<String>
+ + obtenerIdPorFecha(String fecha) : List<String>
+ + obtenerFechaPorIdPedido(int id) : String"
+13,Clase,UML,2,,,,,,,,UI," + CLIENTE_UI = 1 : final int
+ + ADMINISTRADOR_UI = 6 : final int
+ + final int CLIENTE_VER_CARRITOS = 3 : final int
+ + CLIENTE_VER_PRODUCTOS = 2 : final int
+ + CLIENTE_MODIFICAR_CARRITO = 4 : final int
+ + CLIENTE_COMPRAR = 5 : final int
+ + ADMINISTRADOR_VER_PRODUCTOS = 7 : final int
+ + ADMINISTRADOR_MODIFICAR_PRODUCTO = 8 : final int
+ + ADMINISTRADOR_VER_USUARIOS = 9 : final int
+ + ADMINISTRADOR_VER_PEDIDOS = 10 : final int
+ + ADMINISTRADOR_VER_ORDENES = 11 : final int
+ - application : Application
+ - eventoBoton : EventoBoton
+ - contentPane : JPanel
+ - panel_table : JPanel
+ - panel_total : JPanel
+ - table : JTable
+ - id : int
+ - id_aBaseDatos : int
+ - fecha : String
+ - txt_info : JTextPane
+ - lbl_icon : JLabel
+ - bl_logo : JLabel
+ - bl_total : JLabel
+ - bl_total_precio : JLabel
+ - btn_secundary_1 : JButton
+ - btn_secundary_2 : JButton
+ - btn_secundary_3 : JButton
+ - btn_primary : JButton
+ - scrollPane : JScrollPane
+"," - initialize() : void
+ - init() : void
+ - update() : void
+ + getApplication() : Application
+ + loginScreen() : void
+ - agregarQuitar() : void
+ - modificarProducto() : void
+ - VerOrdenes() : void
+ - menuPrincipalCliente() : void
+ - menuVerCarritoCliente() : void
+ - menuVerProductosCliente() : void
+ - createListProductos(productos : List<List<String>>) : Object[][]
+ - createListArticulos(articulos : List<Articulo>) : Object[][]
+ - menuPrincipalAdministrador() : void
+ - menuVerProductosAdministrador() : void
+ - menuVerUsuarios() : void
+ - verPedidos() : void
+ - menuVerPedidos(lista : List<List<String>>) : void
+ - createListUsuarios(>usuarios : List<List<String>) : Object[][]
+ - createListPedidos(lista : List<List<String>>) : Object[][]
+ + configuraUI(valor : int) : void
+ + getID(valor : String, aDeBaseDatos : boolean) : int
+ + getCantidad(id : int, valor : String) : int
+ + error(int valor) : void
+ + getNombre() : String
+ + getDescripcion() : String
+ + getPrecio() : float
+ + getStock() : int
+ + endUp(valor : int) : void"
+14,Clase,UML,2,,,,,,,,AdminConsole," + LISTA_PRODUCTOS = 0 : final int
+ - application : Application 
+ - actionHandler : ActionHandler "," + menuPrincipalFlujo() : void 
+ + menuVerProductoFlujo() : void
+ + menuModificalProductoFlujo() : void
+ + menuVerUsuariosFlujo() : void 
+ + menuPrincipal() : int 
+ + menuVerProductos() : int
+ + menuModificarProducto() : int
+ + menuVerUsuarios() : int
+ - scannerInt() : int
+ - scanner() : int
+ - verificaCantidad(id : int,cantidad : int,operacion : boolean) : boolean
+ - verificaID(id : int,aDeBaseDatos : boolean) : boolean
+ - tituloMenu(cadena : String) : void 
+ - tablaFix(etiquetas : String[], lista : List<List<String>>,necesitaTotal : boolean) : void 
+ - cargaLista(valor : int) : void
+ + configuraUI(valor : int) : void
+ + getID(valor : String,aDeBaseDatos : boolean) : int
+ + getCantidad(id : int ,valor : String) : int
+ + error(valor : int) : void
+ + getNombre() : String
+ + getDescripcion() : String
+ + getPrecio() : float
+ + getStock() : int 
+ + endUp(int valor) : void"
+15,Clase,UML,2,,,,,,,,ActionHandler," - mySQLHelper : MySQLHelper 
+ - application : Application
+ - isLogin : boolean 
+ - user : String"," + iniciarSecision(login : Login) : void 
+ + registrarse(login : Login) : void 
+ + cerrarSesion(endUp : EndUp) : void 
+ + agregaAlCarrito(uiHelper : UIHelper) : void
+ + agregarCantidadProducto(uiHelper : UIHelper, aBaseDeDatos : boolean) : void
+ + quitarCantidadProducto(uiHelper : UIHelper) : void
+ + comprar(uiHelper : UIHelper) : void
+ + vaciarCarrito() : void
+ + obtenerProductos(con_existencias : boolean ) : List<List<String>>
+ + obtenerArticulos (lista : List<Articulo>) : List<List<String>>
+ + consultaStock(id : int, cantidad : int) : boolean 
+ + consultaSiExiste(id : int) : boolean
+ + modificarProducto(uiHelper : UIHelper, aBaseDeDatos : boolean) : void 
+ + consultaSiExisteProducto(nombre : String) : boolean
+ + cargarProducto(uiHelper : UIHelper) : void
+ + obtenerUsuarios(soloConPedidos : boolean) : List<List<String>>
+ + exit() : void 
+ + configuraUI(uiHelper : UIHelper,valor : int ) : void 
+ + buscarProductoNombre(uiHelper : UIHelper) : int 
+ + mermar(endUp : EndUp) : void
+ + aumentar(endUp : EndUp) : void
+ + acept(endUp : EndUp) : void
+ + dispose(endUp : EndUp) : void 
+ + modificaNombre(uiHelper : UIHelper) : void
+ + modificaDescripcion(UIHelper uiHelper) : void
+ + modificaPrecio(UIHelper uiHelper) : void
+ + modificarProductoFinal(EndUp endUp) : void
+ + verPedidos(uiHelper : UIHelper) : void 
+ + verOrdenes(uiHelper : UIHelper) : void"
+16,Clase,UML,2,,,,,,,,InterfaceConsole," - application : Application 
+ - actionHandler : ActionHandler
+ - scanner : Scanner"," + play() : void
+ - login() : int 
+ - scanner() : int 
+ + getUser() : String
+ + getPassword() : String
+ + stayLoggedIn() : boolean
+ + endUp(valor : int) : void"
+17,Clase,UML,2,,,,,,,,ClientConsole," - application : Application 
+ - actionHandler : ActionHandler "," + menuClienteFlujo() : void
+ + menuVerProductoFlujo() : void
+ + menuVerCarritoFlujo() : void
+ + menuModificarProductoCarritoFlujo() : void
+ + menuCompraFlujo() : void
+ + menuPrincipalCliente() : int
+ + menuVerProductos() : int
+ + menuVerCarrito() : int
+ + menuModificarProductoDelCarrito() : int
+ - menuCompra() : int 
+ - verificaCantidad(id : int,cantidad : int, operacion : boolean) : boolean
+ - verificaID(id : int, aDeBaseDatos : boolean) : boolean
+ - scanner() : int
+ - tituloMenu(cadena : String) : void 
+ - tablaFix(etiquetas : String[], lista : List<List<String>>,necesitaTotal : boolean) : void
+ - cargaLista(valor : int) : void
+ + configuraUI(valor : int) : void
+ + getID(valor : String, aDeBaseDatos : boolean ) : int
+ + getCantidad(id : int, valor : String) : int
+ + error(valor : int) : void
+ + getNombre() : String
+ + getDescripcion() : String
+ + getPrecio() : float 
+ + getStock() : int
+ + endUp(int valor) : void "
+18,Clase,UML,2,,,,,,,,"<<Interfaz>>
+EndUp", + endUp(valor : int) : void,
+19,Clase,UML,2,,,,,,,,"<<Interfaz>>
+UIHelper"," + configuraUI(valor : int) : void
+ + getID(valor : String ,aDeBaseDatos : boolean) : int
+ + getCantidad(id : int ,valor : String) : int 
+ + error(valor : int) : void 
+ + getNombre() : String 
+ + getDescripcion() : String
+ + getPrecio() : float 
+ + getStock() : int ",
+20,Clase,UML,2,,,,,,,,"<<Interfaz>>
+Login"," + getUser() : String 
+ + getPassword() : String 
+ + stayLoggedIn() : boolean 
+ + endUp(int valor) : void",
+21,Clase,UML,2,,,,,,,,DataBaseInfo," - JDBC_DRIVER : static String
+ - DB_URL : static String
+ - USER : static String
+ - PASSWORD : static String"," + setDefaultDataBaseInfo() : static void
+ + setCustomDataBaseInfo() : static void
+ + getJDBC_DRIVER() : String
+ + setJDBC_DRIVER(String JDBC_DRIVER) : void
+ + getDB_URL() : String
+ + setDB_URL(String DB_URL) : void
+ + getUSER() : String
+ + setUSER(String USER) : void
+ + getPASSWORD() : String
+ + setPASSWORD(String PASSWORD) : void"
+22,Clase,UML,2,,,,,,,,JDialogLogin," - frame : UI
+ - eventoBoton : EventoBoton
+ - contentPane : final JPanel
+ - jtf_user : JTextField
+ - jtf_password : JPasswordField
+ - jbn_login : JButton
+ - jbn_join : JButton
+ - jbn_exit : JButton
+ - JCheckBox jcb0 : "," + String getUser() : 
+ + String getPassword() : 
+ + boolean stayLog gedIn() : 
+ + endUp(valor : int) : void"
+23,Clase,UML,2,,,,,,,,EventoBoton ,"   - application : Application
+   - actionHandler : ActionHandler
+   - login : Login
+   - frame : UI
+   - endUp : EndUp","  + getActionHandler() : ActionHandler
+  + actionPerformed(event : ActionEvent) : void"
+24,Clase,UML,2,,,,,,,,JDialogModificar," - EventoBoton eventoBoton : 
+ - application : Application
+ - contentPane : final JPanel
+ - JTextField textField : JTextField
+ - jtf_nombre : JTextField
+ - jtf_descripcion : JTextField
+ - jtf_precio : JTextField
+ - jtf_stock : JTextField
+ - jlb_total_num : JLabel
+ - producto : Producto
+ - productoAux : Producto"," - initialize() : void
+ + endUp(valor : int) : void"
+25,Clase,UML,2,,,,,,,,JDialogVerPedido ," -  eventoBoton : EventoBoton
+ -  application : Application
+ -  contentPane : final JPanel
+ -  textField : JTextField
+ -  table : JTable
+ -  lista : List<List<String>>
+ -  fecha : String"," -  initialize()  : void
+ -  createListOrdenes(lista : List<List<String>>)  : Object[][]
+ -  endUp(valor : int)  : void"
+26,Clase,UML,2,,,,,,,,JDialogAgregarQuitar," - eventoBoton : EventoBoton
+ - application : Application
+ - contentPane : final JPanel
+ - textField : JTextField
+ - jlb_precio_unitario : JLabel
+ - jlb_total_num : JLabel
+ - cantidad : int
+ - articulo : Articulo"," - initialize() : void
+ + endUp(valor : int) : void"
+27,Línea,,2,,49,,3,None,None,,,,
+28,Línea,,2,,,10,11,None,Composition,,0..*,1,
+29,Línea,,2,,,11,7,None,Composition,,1,1,
+30,Línea,,2,,,6,5,None,Composition,,1,1,
+31,Línea,,2,,,7,6,None,Generalization,,,,
+32,Línea,,2,,,8,6,None,Generalization,,,,
+33,Línea,,2,,,9,8,None,None,,,,
+34,Línea,,2,,,16,5,None,Composition,,,,
+35,Línea,,2,,,13,5,None,Composition,,,,
+36,Línea,,2,,,13,18,None,Generalization,,,,
+37,Línea,,2,,,13,19,None,Generalization,,,,
+38,Línea,,2,,,15,23,None,Composition,,,,
+39,Línea,,2,,,15,17,None,Composition,,,,
+40,Línea,,2,,,15,14,None,Composition,,,,
+41,Línea,,2,,,23,13,None,Composition,,,,
+42,Línea,,2,,,12,13,None,Composition,,,,
+43,Línea,,2,,,12,15,None,Composition,,,,
+44,Línea,,2,,,21,12,None,Composition,,,,
+45,Línea,,2,,,26,13,None,Aggregation,,,,
+46,Línea,,2,,,24,13,None,Aggregation,,,,
+47,Línea,,2,,,22,13,None,Aggregation,,,,
+48,Línea,,2,,,22,20,None,Generalization,,,,
+49,Grupo 1,,2,,,,,,,,,,
